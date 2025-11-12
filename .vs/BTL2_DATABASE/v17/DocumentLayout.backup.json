@@ -1,0 +1,51 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2_DATABASE\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{40291A78-7E3F-F9EB-55FD-65F9B82BF8A0}|BTL2_DATABASE.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2_DATABASE\\01_create_tables.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{40291A78-7E3F-F9EB-55FD-65F9B82BF8A0}|BTL2_DATABASE.ssmssqlproj|solutionrelative:01_create_tables.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{40291A78-7E3F-F9EB-55FD-65F9B82BF8A0}|BTL2_DATABASE.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2_DATABASE\\02_insert_sample_data.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{40291A78-7E3F-F9EB-55FD-65F9B82BF8A0}|BTL2_DATABASE.ssmssqlproj|solutionrelative:02_insert_sample_data.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "01_create_tables.sql - (local).BTL2_DATABASE (LAPTOP-O6VBUAP0\\ASUS (52))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2_DATABASE\\01_create_tables.sql",
+              "RelativeDocumentMoniker": "01_create_tables.sql",
+              "ToolTip": "01_create_tables.sql - (local).BTL2_DATABASE (LAPTOP-O6VBUAP0\\ASUS (52))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-12T01:16:04.445Z",
+              "IsPinned": true,
+              "EditorCaption": " - (local).BTL2_DATABASE (LAPTOP-O6VBUAP0\\ASUS (52))"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "02_insert_sample_data.sql - (local).BTL2_DATABASE (LAPTOP-O6VBUAP0\\ASUS (54))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2_DATABASE\\02_insert_sample_data.sql",
+              "RelativeDocumentMoniker": "02_insert_sample_data.sql",
+              "ToolTip": "02_insert_sample_data.sql - (local).BTL2_DATABASE (LAPTOP-O6VBUAP0\\ASUS (54))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-12T03:04:17.571Z",
+              "EditorCaption": " - (local).BTL2_DATABASE (LAPTOP-O6VBUAP0\\ASUS (54))"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
