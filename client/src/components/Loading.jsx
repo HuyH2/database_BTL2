@@ -1,16 +1,12 @@
 import React from 'react'
 
-export default function Table({ columns, data }){
+export default function Loading({ message = 'Đang tải...' }){
   return (
-    <table>
-      <thead>
-        <tr>{columns.map(c=> <th key={c.key}>{c.label}</th>)}</tr>
-      </thead>
-      <tbody>
-        {data.map(row => (
-          <tr key={row.id}>{columns.map(c=> <td key={c.key}>{row[c.key]}</td>)}</tr>
-        ))}
-      </tbody>
-    </table>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div style={{ width: 20, height: 20, border: '3px solid #ddd', borderTopColor: '#3498db', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+      <span>{message}</span>
+
+      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+    </div>
   )
 }

@@ -1,24 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { getItem } from '../api/items'
+import React from 'react';
+import { useParams } from 'react-router-dom';
 
-export default function ItemDetail(){
-  const { id } = useParams()
-  const [item, setItem] = useState(null)
-
-  useEffect(()=>{ if(id) load() }, [id])
-  async function load(){
-    const it = await getItem(id)
-    setItem(it)
-  }
-
-  if(!item) return <div>Loading...</div>
+const CourseDetail = () => {
+  const { id } = useParams();
   return (
-    <div>
-      <h2>Item Detail</h2>
-      <p>ID: {item.id}</p>
-      <p>Name: {item.name}</p>
-      <p>Description: {item.description}</p>
+    <div style={{ padding: '20px' }}>
+      <h1>Chi tiết khóa học (ID: {id})</h1>
+      <img src="https://via.placeholder.com/800x400" alt="Banner" style={{ width: '100%', maxHeight: '400px', objectFit: 'cover' }} />
+      <p>Mô tả chi tiết khóa học sẽ hiện ở đây...</p>
+      <button style={{ padding: '15px 30px', background: '#e67e22', color: 'white', border: 'none', fontSize: '18px' }}>Mua khóa học này</button>
     </div>
-  )
-}
+  );
+};
+export default CourseDetail;
