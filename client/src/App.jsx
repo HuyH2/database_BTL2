@@ -1,25 +1,20 @@
-import React from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
-import ItemsList from './pages/ItemsList'
-import ItemForm from './pages/ItemForm'
-import ItemDetail from './pages/ItemDetail'
+import { Routes, Route } from 'react-router-dom';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import HomePage from './pages/HomePage'; // Ví dụ
 
-export default function App(){
+function App() {
   return (
     <div>
-      <header>
-        <nav>
-          <Link to="/">Home</Link> | <Link to="/items">Items</Link>
-        </nav>
-      </header>
-      <main>
-        <Routes>
-          <Route path="/" element={<h2>Welcome</h2>} />
-          <Route path="/items" element={<ItemsList/>} />
-          <Route path="/items/create" element={<ItemForm/>} />
-          <Route path="/items/:id" element={<ItemDetail/>} />
-        </Routes>
-      </main>
+      {/* Phần Navbar có thể để ở đây để trang nào cũng thấy */}
+      
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
     </div>
-  )
+  );
 }
+
+export default App;
