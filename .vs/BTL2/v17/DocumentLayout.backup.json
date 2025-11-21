@@ -1,12 +1,110 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\triggers.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|solutionrelative:triggers.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\test.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|solutionrelative:test.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\stored_procedure.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|solutionrelative:stored_procedure.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\insert_tables.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|solutionrelative:insert_tables.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\functions.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|solutionrelative:functions.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\create_tables.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}",
+      "RelativeMoniker": "D:0:0:{45E24F3C-CE39-38FB-5556-3937AF532E8F}|BTL2.ssmssqlproj|solutionrelative:create_tables.sql||{B5A506EB-11BE-4782-9A18-21265C2CA0B4}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "stored_procedure.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (66))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\stored_procedure.sql",
+              "RelativeDocumentMoniker": "stored_procedure.sql",
+              "ToolTip": "stored_procedure.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (66))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-20T16:53:10.757Z",
+              "EditorCaption": " - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (66))"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "test.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (69))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\test.sql",
+              "RelativeDocumentMoniker": "test.sql",
+              "ToolTip": "test.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (69))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-20T17:15:22.685Z",
+              "EditorCaption": " - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (69))"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "triggers.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (65))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\triggers.sql",
+              "RelativeDocumentMoniker": "triggers.sql",
+              "ToolTip": "triggers.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (65))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-20T17:13:38.517Z",
+              "EditorCaption": " - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (65))"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "insert_tables.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (53))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\insert_tables.sql",
+              "RelativeDocumentMoniker": "insert_tables.sql",
+              "ToolTip": "insert_tables.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (53))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-20T16:24:10.705Z",
+              "EditorCaption": " - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (53))"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "functions.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (68))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\functions.sql",
+              "RelativeDocumentMoniker": "functions.sql",
+              "ToolTip": "functions.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (68))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-20T17:15:21.223Z",
+              "EditorCaption": " - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (68))"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "create_tables.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (64))",
+              "DocumentMoniker": "C:\\Users\\ASUS\\Documents\\SQL Server Management Studio\\BTL2\\create_tables.sql",
+              "RelativeDocumentMoniker": "create_tables.sql",
+              "ToolTip": "create_tables.sql - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (64))",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-11-20T16:16:16.934Z",
+              "EditorCaption": " - (local).BTL2 (LAPTOP-O6VBUAP0\\ASUS (64))"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
