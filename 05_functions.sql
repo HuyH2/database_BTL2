@@ -80,7 +80,7 @@ BEGIN
     DEALLOCATE VideoDurationCursor;
 
     -- Chuyển phút → giờ
-    RETURN CAST(@TotalMinutes AS FLOAT) / 60.0;
+    RETURN ROUND(CAST(@TotalMinutes AS FLOAT) / 60.0, 2);
 END;
 GO
 

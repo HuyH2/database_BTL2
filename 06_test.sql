@@ -1,6 +1,18 @@
 ﻿USE BTL2;
 GO
 
+--------------------------------------------------------------------
+-- CLEAN OLD TEST DATA
+--------------------------------------------------------------------
+DELETE FROM STUDENT WHERE UserID > 15;
+DELETE FROM INSTRUCTOR WHERE UserID > 15;
+DELETE FROM ADMIN WHERE UserID > 15;
+DELETE FROM USER_ACCOUNT WHERE Email LIKE '%role_test%';
+DELETE FROM USER_ACCOUNT WHERE Email LIKE '%age1%';
+DELETE FROM USER_ACCOUNT WHERE Email LIKE '%noquiz%';
+GO
+
+
 /**************************************************************************
     2.2 — TEST TRIGGER
 **************************************************************************/
@@ -81,6 +93,7 @@ PRINT '==================== TRIGGER TESTS END ====================';
 PRINT '';
 PRINT '';
 
+
 /**************************************************************************
     2.3 — TEST STORED PROCEDURES
 **************************************************************************/
@@ -119,40 +132,42 @@ PRINT '';
 PRINT '==================== FUNCTION TESTS START ====================';
 
 --------------------------------------------------------------------
--- FUNCTION 1 — fn_TotalVideoHoursInCourse
+-- FUNCTION 1 — fn_CountVideosInCourse
 --------------------------------------------------------------------
-PRINT '--- FUNC TEST 1: Video hours of CourseID = 1 ---';
-SELECT dbo.fn_TotalVideoHoursInCourse(1) AS Hours_Course_1;
+PRINT '--- FUNC TEST 1: Count videos of CourseID = 1 ---';
+SELECT dbo.fn_CountVideosInCourse(1) AS TotalVideos_Course1;
 
-PRINT '--- FUNC TEST 2: Invalid CourseID = -1 ---';
-SELECT dbo.fn_TotalVideoHoursInCourse(-1) AS InvalidCourseHours;
+
+PRINT '--- FUNC TEST 2: Invalid CourseID = -1 (Expect -1) ---';
+SELECT dbo.fn_CountVideosInCourse(-1) AS InvalidVideoCount;
+
 
 PRINT '--- FUNC TEST 3: Course with no videos ---';
+
+-- Tạo course trống để test
 INSERT INTO COURSE (Name, Category, Language, Price, Duration, InstructorID)
-VALUES ('Empty Course', 'Test', 'VN', 0, 5, 6);
+VALUES ('Empty Course 2', 'TestCourse', 'EN', 0, 1, 6);
 
-DECLARE @NewCourse INT = SCOPE_IDENTITY();
-SELECT dbo.fn_TotalVideoHoursInCourse(@NewCourse) AS EmptyCourseHours;
+DECLARE @EmptyCourseID INT = SCOPE_IDENTITY();
+
+SELECT dbo.fn_CountVideosInCourse(@EmptyCourseID) AS TotalVideos_EmptyCourse;
+
 
 
 --------------------------------------------------------------------
--- FUNCTION 2 — fn_TotalQuizScore
+-- FUNCTION 2 — fn_TotalVideoHoursInCourse
 --------------------------------------------------------------------
-PRINT '--- FUNC TEST 4: Total quiz score for StudentID = 1 ---';
-SELECT dbo.fn_TotalQuizScore(1) AS TotalQuizScore_Student1;
+PRINT '--- FUNC TEST 4: Total video hours of CourseID = 1 ---';
+SELECT dbo.fn_TotalVideoHoursInCourse(1) AS Hours_Course1;
 
-PRINT '--- FUNC TEST 5: Invalid StudentID = -1 ---';
-SELECT dbo.fn_TotalQuizScore(-1) AS InvalidQuizScore;
 
-PRINT '--- FUNC TEST 6: Student with no quiz results ---';
-INSERT INTO USER_ACCOUNT (UserName, Email, UserPassword, Gender, DateOfBirth, Status)
-VALUES ('NoQuiz Student', 'noquiz@mail.com', '123', 'F', '2002-01-01', 'Active');
+PRINT '--- FUNC TEST 5: Invalid CourseID = -1 (Expect -1) ---';
+SELECT dbo.fn_TotalVideoHoursInCourse(-1) AS InvalidHours;
 
-DECLARE @SID_NOQUIZ INT = SCOPE_IDENTITY();
-INSERT INTO STUDENT VALUES (@SID_NOQUIZ, 'IT', 'Undergrad');
 
-SELECT dbo.fn_TotalQuizScore(@SID_NOQUIZ) AS NoQuizScore;
+PRINT '--- FUNC TEST 6: Total hours for Course with NO videos ---';
+SELECT dbo.fn_TotalVideoHoursInCourse(@EmptyCourseID) AS Hours_EmptyCourse;
 
 
 PRINT '==================== FUNCTION TESTS END ====================';
-
+GO
