@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ fontFamily: 'Nunito, sans-serif' }}>
       
       {/* Banner Giới thiệu */}
       <div style={styles.heroSection}>
@@ -40,29 +40,35 @@ const HomePage = () => {
 const styles = {
   heroSection: {
     textAlign: 'center',
-    padding: '80px 20px',
-    backgroundColor: '#f8f9fa',
-    borderBottom: '1px solid #ddd',
+    padding: '100px 20px', 
+    background: 'linear-gradient(to bottom, #ffffff, #fff0f5)', 
+    borderBottom: '1px solid #f3d2c1', 
   },
+  
   ctaButton: {
     padding: '12px 30px',
     fontSize: '18px',
-    backgroundColor: '#e74c3c',
+    background: 'linear-gradient(to right, #c471f5, #fa71cd)', 
     color: 'white',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '25px', 
     cursor: 'pointer',
+    boxShadow: '0 4px 15px rgba(196, 113, 245, 0.4)', 
+    transition: 'transform 0.2s', 
   },
+
   features: {
     display: 'flex',
     justifyContent: 'center',
     gap: '50px',
-    padding: '50px 20px',
+    padding: '60px 20px',
+    backgroundColor: 'white', 
   },
   featureItem: {
     textAlign: 'center',
-    maxWidth: '200px',
-  }
+    maxWidth: '250px',
+    color: '#555', 
+}
 };
 
 export default HomePage;
