@@ -1,5 +1,4 @@
 import React from 'react';
-// 
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 // 1. Layout & Components dùng chung
@@ -9,7 +8,10 @@ import Footer from './components/Layout/Footer';
 // 2. Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-import AuthContext from './context/AuthContext';
+
+// 👇 SỬA LỖI 1: Import trang TestAuth (Trang giao diện) chứ KHÔNG phải AuthContext (Kho dữ liệu)
+// Nếu bạn chưa có file này, hãy xóa dòng import này và xóa dòng Route bên dưới đi
+//import TestAuth from './pages/TestAuth'; 
 
 import HomePage from './pages/public/HomePage';
 import CourseList from './pages/public/CourseList';
@@ -42,18 +44,19 @@ function App() {
   // Danh sách các trang KHÔNG muốn hiện Navbar/Footer
   const hideLayoutRoutes = ['/login', '/register'];
   
-  // Biến kiểm tra: Nếu đường dẫn hiện tại KHÔNG nằm trong danh sách trên thì hiện (true)
   const shouldShowLayout = !hideLayoutRoutes.includes(location.pathname);
 
   return (
     <div className="app-container">
       
-      {/*Bọc Navbar trong điều kiện này */}
       {shouldShowLayout && <Navbar />}
 
-      {/*Sửa padding: Nếu ở trang Login thì padding = 0 để full màn hình */}
       <div className="main-content" style={{ minHeight: '80vh', padding: shouldShowLayout ? '20px' : '0' }}>
         <Routes>
+          {/* --- CÔNG CỤ TEST --- */}
+          {/*<Route path="/test-auth" element={<TestAuth />} /> */}
+
+
           {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
@@ -92,7 +95,6 @@ function App() {
         </Routes>
       </div>
 
-      {/*Bọc Footer trong điều kiện này luôn */}
       {shouldShowLayout && <Footer />}
     </div>
   );

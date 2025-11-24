@@ -21,7 +21,7 @@ const Login = () => {
     if (isSuccess) {
       navigate('/'); // Chuyển về trang chủ
     } else {
-      setError('Sai thông tin rồi! (Thử: nguyenvana@gmail.com / 1)');
+      setError('Sai thông tin rồi!');
     }
   };
 
