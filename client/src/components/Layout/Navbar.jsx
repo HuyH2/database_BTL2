@@ -1,198 +1,165 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-//  1. Import Context để biết ai đang đăng nhập
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
-  //  2. Lấy thông tin user và hàm logout từ kho dữ liệu
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  //LOGIC BẬT TẮT DROPDOWN
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   const handleLogout = () => {
     logout();
-    navigate('/login'); // Đăng xuất xong thì chuyển về trang login
+    navigate('/login');
   };
+  // Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <nav style={styles.navContainer}>
-      {/* 1. LOGO (Ai cũng thấy) */}
-      <div style={styles.logo}>
-        <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
-          💮 E-Learning
-        </Link>
-      </div>
+    <div style={styles.navWrapper}>
+      <nav style={styles.navContainer}>
+        {/* 1. LOGO */}
+        <div style={styles.logo}>
+          <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
+            💮 E-Learning
+          </Link>
+        </div>
 
-      {/* 2. MENU (Thay đổi nội dung theo Role) */}
-      <ul style={styles.menuList}>
-        
-        {/* --- LUÔN HIỆN: Trang chủ --- */}
-        <li><Link to="/" style={styles.link}>Trang chủ</Link></li>
-
-        {/* --- TRƯỜNG HỢP: KHÁCH (Chưa đăng nhập) --- */}
-        {!user && (
+        {/* 2. MENU GIỮA */}
+        <ul style={styles.menuList}>
+          <li><Link to="/" style={styles.link}>Trang chủ</Link></li>
+          
+          {!user && (
           <li><Link to="/courses" style={styles.link}>Khám phá khóa học</Link></li>
         )}
 
-        {/* --- TRƯỜNG HỢP: HỌC VIÊN (Student) --- */}
-        {user?.role === 'student' && (
-          <>
-            <li><Link to="/student/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
-            <li><Link to="/my-learning" style={styles.link}>Khóa học của tôi</Link></li>
-            <li><Link to="/courses" style={styles.highlightLink}>Tìm khóa học mới ✨</Link></li>
-          </>
-        )}
+          {user?.role === 'student' && (
+            <>
+              <li><Link to="/student/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
+              <li><Link to="/my-learning" style={styles.link}>Khóa học của tôi</Link></li>
+            </>
+          )}
 
-        {/* --- TRƯỜNG HỢP: GIÁO VIÊN (Teacher) --- */}
-        {user?.role === 'teacher' && (
-          <>
-            <li><Link to="/teacher/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
-            {/* Menu riêng cho giáo viên */}
-            <li><Link to="/teacher/courses" style={styles.link}>Quản lý dạy học 👨‍🏫</Link></li>
-            <li><Link to="/my-learning" style={styles.link}>Khóa học tham gia 📚</Link></li>
-            <li><Link to="/courses" style={styles.highlightLink}>Tìm khóa học mới ✨</Link></li>
-          </>
-        )}
+          {user?.role === 'teacher' && (
+            <>
+              <li><Link to="/teacher/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
+              <li><Link to="/teacher/courses" style={styles.link}>Quản lý</Link></li>
+            </>
+          )}
 
-        {/* --- TRƯỜNG HỢP: ADMIN --- */}
-        {user?.role === 'admin' && (
-          <>
-            <li><Link to="/admin/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
-            <li><Link to="/admin/users" style={styles.link}>Quản lý người dùng ⚙️</Link></li>
-          </>
-        )}
-      </ul>
+          {user?.role === 'admin' && (
+            <li><Link to="/admin/dashboard" style={styles.link}>Quản trị</Link></li>
+          )}
+        </ul>
 
-      {/* 3. KHU VỰC TÀI KHOẢN (Bên phải) */}
-      <div style={styles.authBlock}>
-        {!user ? (
-          // NẾU CHƯA ĐĂNG NHẬP: Hiện nút Login/Register cũ
-          <>
-            <Link to="/login" style={styles.authBtn}>Đăng nhập</Link>
-            <Link to="/register" style={styles.authBtn}>Đăng ký</Link>
-          </>
-        ) : (
-          // NẾU ĐÃ ĐĂNG NHẬP: Hiện Avatar + Tên + Nút Đăng xuất
-          <div style={styles.userSection}>
-            {/* Ảnh đại diện tròn */}
-            <img src={user.avatar} alt="Avatar" style={styles.avatar} />
-            
-            {/* Tên và Vai trò */}
-            <div style={styles.userInfo}>
-               <span style={styles.userName}>{user.name}</span>
-               <span style={styles.userRole}>{user.role.toUpperCase()}</span>
+        {/* 3. AVATAR & DROPDOWN */}
+        <div style={styles.authBlock}>
+          {!user ? (
+            <>
+              <Link to="/login" style={styles.authBtn}>Đăng nhập</Link>
+              <Link to="/register" style={styles.authBtn}>Đăng ký</Link>
+            </>
+          ) : (
+            <div style={{ position: 'relative' }} ref={dropdownRef}>
+              
+              {/* Avatar Button */}
+              <div onClick={() => setShowDropdown(!showDropdown)} style={styles.avatarWrapper}>
+                <img src={user.avatar} alt="User" style={styles.avatarBtn} />
+                <span style={{fontSize: '12px', marginLeft: '5px', color: 'white'}}>▼</span>
+              </div>
+
+              {/* Dropdown Menu */}
+              {showDropdown && (
+                <div style={styles.dropdownMenu}>
+                  
+                  <div style={styles.dropdownHeader}>
+                    <div style={{fontWeight: '800', fontSize: '16px', color: '#333'}}>{user.name}</div>
+                    <div style={{fontSize: '12px', color: '#888'}}>{user.email || user.role.toUpperCase()}</div>
+                  </div>
+
+                  <div style={styles.separator}></div>
+
+                  <Link to="/profile" style={styles.dropdownItem}>👤 Hồ sơ cá nhân</Link>
+                  <Link to="/settings" style={styles.dropdownItem}>⚙️ Cài đặt</Link>
+                  
+                  <div style={styles.separator}></div>
+                  
+                  <div onClick={handleLogout} style={{...styles.dropdownItem, color: '#e74c3c', fontWeight: '700'}}>
+                    🚪 Đăng xuất
+                  </div>
+                </div>
+              )}
             </div>
-
-            {/* Nút đăng xuất */}
-            <button onClick={handleLogout} style={styles.logoutBtn}>Đăng xuất</button>
-          </div>
-        )}
-      </div>
-    </nav>
+          )}
+        </div>
+      </nav>
+    </div>
   );
 };
 
-// --- CSS STYLES  ---
 const styles = {
+  navWrapper: {
+    position: 'sticky',
+    top: '20px',
+    zIndex: 1000,
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '0 20px',
+  },
   navContainer: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '10px 30px', 
+    width: '100%',
+    maxWidth: '1200px',
+    padding: '10px 30px',
     background: 'linear-gradient(to right, #c471f5, #fa71cd)', 
+    borderRadius: '50px',
+    boxShadow: '0 10px 25px rgba(196, 113, 245, 0.5)',
     color: 'white',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)', 
     fontFamily: "'Nunito', sans-serif",
   },
   logo: {
-    fontSize: '24px',
-    fontWeight: '800',
-    textShadow: '1px 1px 2px rgba(0,0,0,0.2)', 
+    fontSize: '24px', fontWeight: '800', textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+    display: 'flex', alignItems: 'center',
   },
   menuList: {
-    display: 'flex',
-    listStyle: 'none',
-    gap: '25px',
-    margin: 0,
-    padding: 0,
-    alignItems: 'center',
+    display: 'flex', listStyle: 'none', gap: '30px', margin: 0, padding: 0,
   },
   link: {
-    textDecoration: 'none',
-    color: 'white', 
-    fontSize: '15px',
-    fontWeight: '700',
-    transition: 'opacity 0.3s',
+    textDecoration: 'none', color: 'white', fontSize: '16px', fontWeight: '700', transition: 'all 0.3s',
   },
-  highlightLink: {
-    textDecoration: 'none',
-    color: '#fff', 
-    fontWeight: '800',
-    backgroundColor: 'rgba(255, 255, 255, 0.25)', 
-    padding: '6px 15px',
-    borderRadius: '20px', 
-    border: '1px solid rgba(255,255,255,0.4)',
-    fontSize: '14px',
-  },
-  authBlock: {
-    display: 'flex',
-    gap: '10px', 
-    alignItems: 'center',
-  },
+  authBlock: { display: 'flex', gap: '10px' },
   authBtn: {
-    textDecoration: 'none',
-    backgroundColor: 'white', 
-    color: '#6a1b9a', 
-    padding: '8px 20px',
-    borderRadius: '20px', 
-    fontWeight: '800',
-    fontSize: '14px',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-    transition: 'transform 0.2s', 
-    fontFamily: "'Nunito', sans-serif",
+    textDecoration: 'none', backgroundColor: 'white', color: '#6a1b9a', padding: '10px 24px',
+    borderRadius: '30px', fontWeight: '800', fontSize: '14px', boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
   },
-  
- //User đã login style
-  userSection: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-    backgroundColor: 'rgba(255,255,255,0.2)', 
-    padding: '5px 15px 5px 5px', 
-    borderRadius: '30px',
-    border: '1px solid rgba(255,255,255,0.3)',
+  avatarWrapper: {
+    display: 'flex', alignItems: 'center', cursor: 'pointer', padding: '5px',
+    borderRadius: '30px', transition: 'background 0.2s',
   },
-  avatar: {
-    width: '35px',
-    height: '35px',
-    borderRadius: '50%', 
-    objectFit: 'cover',
-    border: '2px solid white',
+  avatarBtn: {
+    width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover', border: '2px solid white',
   },
-  userInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    lineHeight: '1.2',
+  dropdownMenu: {
+    position: 'absolute', top: '55px', right: '0', width: '240px',
+    backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 5px 30px rgba(0,0,0,0.15)',
+    padding: '10px 0', display: 'flex', flexDirection: 'column', zIndex: 9999, textAlign: 'left',
   },
-  userName: {
-    fontSize: '14px',
-    fontWeight: '800',
-  },
-  userRole: {
-    fontSize: '10px',
-    opacity: 0.9,
-    fontWeight: '600',
-  },
-  logoutBtn: {
-    background: 'white',
-    border: 'none',
-    color: '#a21dacff', 
-    cursor: 'pointer',
-    fontWeight: '800',
-    marginLeft: '10px',
-    fontSize: '11px',
-    padding: '5px 10px',
-    borderRadius: '10px',
-    fontFamily: "'Nunito', sans-serif",
+  dropdownHeader: { padding: '10px 20px' },
+  separator: { height: '1px', backgroundColor: '#eee', margin: '5px 0' },
+  dropdownItem: {
+    textDecoration: 'none', color: '#444', padding: '10px 20px', fontSize: '15px', fontWeight: '600',
+    display: 'block', cursor: 'pointer', fontFamily: "'Nunito', sans-serif",
   }
 };
 
