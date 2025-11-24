@@ -34,6 +34,8 @@ import OrganizationManager from './pages/admin/OrganizationManager';
 import ForumManager from './pages/admin/ForumManager';
 import GuardianDashboard from './pages/guardian/GuardianDashboard';
 import ChildProgress from './pages/guardian/ChildProgress';
+import ForumPage from './pages/community/ForumPage';
+import QuizPlayer from "./components/QuizPlayer";
 
 function App() {
   const location = useLocation();
@@ -50,7 +52,8 @@ function App() {
 
       <div className="main-content" style={{ minHeight: '80vh', padding: shouldShowLayout ? '20px' : '0' }}>
         <Routes>
-
+          <Route path="/forum" element={<ForumPage />} />
+          <Route path="/quiz/:quizId" element={<QuizPlayer />} />
           {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />

@@ -47,6 +47,7 @@ const Navbar = () => {
               <li><Link to="/student/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
               <li><Link to="/my-learning" style={styles.link}>Khóa học của tôi</Link></li>
               <li><Link to="/courses" style={styles.link}>Khám phá khóa học</Link></li>
+              <li><Link to="/forum" style={styles.link}>Diễn đàn</Link></li>
             </>
           )}
 
@@ -55,6 +56,7 @@ const Navbar = () => {
               <li><Link to="/teacher/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
               <li><Link to="/teacher/courses" style={styles.link}>Khóa học của tôi</Link></li>
               <li><Link to="/courses" style={styles.link}>Khám phá khóa học</Link></li>
+              <li><Link to="/forum" style={styles.link}>Diễn đàn</Link></li>
             </>
           )}
 
@@ -62,6 +64,7 @@ const Navbar = () => {
             <>
             <li><Link to="/admin/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
             <li><Link to="/admin/users" style={styles.link}>Quản lý người dùng </Link></li>
+            <li><Link to="/forum" style={styles.link}>Diễn đàn</Link></li>
             </>
           )}
         </ul>
