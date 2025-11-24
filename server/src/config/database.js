@@ -12,21 +12,19 @@ const config = {
   }
 };
 
-async function getPool() {
-  const pool = await sql.connect(config);
-  return pool;
-}
+let pool = null;
 
-// Export function connectDB để tương thích với server.js
-async function connectDB() {
+async function getPool() {
   try {
-    await getPool();
-    console.log('SQL Server connected successfully!');
-    return true;
+    if (!pool) {
+      pool = await sql.connect(config);
+      console.log('SQL Server pool connected successfully!');
+    }
+    return pool;
   } catch (error) {
     console.error('SQL Server connection error:', error);
     throw error;
   }
 }
 
-module.exports = connectDB;
+module.exports = { sql, getPool };
