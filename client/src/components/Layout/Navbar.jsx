@@ -7,7 +7,7 @@ const Navbar = () => {
       {/* 1. LOGO */}
       <div style={styles.logo}>
         <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
-          🌸 E-Learning
+          💮 E-Learning
         </Link>
       </div>
 
@@ -46,10 +46,11 @@ const styles = {
     background: 'linear-gradient(to right, #c471f5, #fa71cd)', 
     color: 'white',
     boxShadow: '0 4px 6px rgba(0,0,0,0.1)', 
+    fontFamily: "'Nunito', sans-serif", 
   },
   logo: {
     fontSize: '24px',
-    fontWeight: 'bold',
+    fontWeight: '800', 
     textShadow: '1px 1px 2px rgba(0,0,0,0.2)', 
   },
   menuList: {
@@ -63,13 +64,13 @@ const styles = {
     textDecoration: 'none',
     color: 'white', 
     fontSize: '16px',
-    fontWeight: '500',
+    fontWeight: '600', 
     transition: 'opacity 0.3s',
   },
   highlightLink: {
     textDecoration: 'none',
     color: '#fff', 
-    fontWeight: 'bold',
+    fontWeight: '800',
     backgroundColor: 'rgba(255, 255, 255, 0.2)', 
     padding: '5px 10px',
     borderRadius: '20px', 
@@ -84,10 +85,11 @@ const styles = {
     color: '#6a1b9a', 
     padding: '8px 20px',
     borderRadius: '20px', 
-    fontWeight: 'bold',
+    fontWeight: '800', 
     fontSize: '14px',
     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
     transition: 'transform 0.2s', 
+    fontFamily: "'Nunito', sans-serif", 
   }
 };
 

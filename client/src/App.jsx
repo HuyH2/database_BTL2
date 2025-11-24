@@ -1,20 +1,17 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+// 👇 1. Thêm useLocation vào dòng này
+import { Routes, Route, useLocation } from 'react-router-dom';
 
 // 1. Layout & Components dùng chung
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 
-// 2. Auth (Xác thực)
+// ... (Các import khác giữ nguyên như cũ) ...
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-
-// 3. Public (Trang công khai)
 import HomePage from './pages/public/HomePage';
 import CourseList from './pages/public/CourseList';
 import CourseDetail from './pages/public/CourseDetail';
-
-// 4. Student (Học viên)
 import StudentDashboard from './pages/student/StudentDashboard';
 import MyLearning from './pages/student/MyLearning';
 import LessonPage from './pages/student/LessonPage';
@@ -22,43 +19,46 @@ import Cart from './pages/student/Cart';
 import Checkout from './pages/student/Checkout';
 import OrderHistory from './pages/student/OrderHistory';
 import MyCertificates from './pages/student/MyCertificates';
-
-// 5. Teacher (Giáo viên)
 import TeacherDashboard from './pages/teacher/TeacherDashboard';
 import MyCreatedCourses from './pages/teacher/MyCreatedCourses';
 import StudentTracking from './pages/teacher/StudentTracking';
-// --- Teacher: Course Editor
 import CreateCourse from './pages/teacher/CourseEditor/CreateCourse';
 import CreateQuiz from './pages/teacher/CourseEditor/CreateQuiz';
 import UploadVideo from './pages/teacher/CourseEditor/UploadVideo';
 import UploadDocument from './pages/teacher/CourseEditor/UploadDocument';
-
-// 6. Admin (Quản trị viên)
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import CourseApproval from './pages/admin/CourseApproval';
 import OrganizationManager from './pages/admin/OrganizationManager';
 import ForumManager from './pages/admin/ForumManager';
-
-// 7. Guardian (Phụ huynh)
 import GuardianDashboard from './pages/guardian/GuardianDashboard';
 import ChildProgress from './pages/guardian/ChildProgress';
 
 function App() {
+  // 👇 2. Thêm đoạn logic kiểm tra đường dẫn này
+  const location = useLocation();
+  
+  // Danh sách các trang KHÔNG muốn hiện Navbar/Footer
+  const hideLayoutRoutes = ['/login', '/register'];
+  
+  // Biến kiểm tra: Nếu đường dẫn hiện tại KHÔNG nằm trong danh sách trên thì hiện (true)
+  const shouldShowLayout = !hideLayoutRoutes.includes(location.pathname);
+
   return (
     <div className="app-container">
-      {/* Navbar luôn hiển thị ở trên cùng */}
-      <Navbar />
+      
+      {/* 👇 3. Bọc Navbar trong điều kiện này */}
+      {shouldShowLayout && <Navbar />}
 
-      {/* Nội dung thay đổi theo đường dẫn */}
-      <div className="main-content" style={{ minHeight: '80vh', padding: '20px' }}>
+      {/* 👇 4. Sửa padding: Nếu ở trang Login thì padding = 0 để full màn hình */}
+      <div className="main-content" style={{ minHeight: '80vh', padding: shouldShowLayout ? '20px' : '0' }}>
         <Routes>
-          {/* --- PUBLIC ROUTES (Ai cũng xem được) --- */}
+          {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/courses" element={<CourseList />} />
-          <Route path="/courses/:id" element={<CourseDetail />} /> {/* :id là tham số động */}
+          <Route path="/courses/:id" element={<CourseDetail />} />
 
           {/* --- STUDENT ROUTES --- */}
           <Route path="/student/dashboard" element={<StudentDashboard />} />
@@ -73,7 +73,6 @@ function App() {
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/teacher/courses" element={<MyCreatedCourses />} />
           <Route path="/teacher/student-tracking" element={<StudentTracking />} />
-          {/* Các chức năng soạn thảo khóa học */}
           <Route path="/teacher/create-course" element={<CreateCourse />} />
           <Route path="/teacher/create-quiz" element={<CreateQuiz />} />
           <Route path="/teacher/upload-video" element={<UploadVideo />} />
@@ -92,8 +91,8 @@ function App() {
         </Routes>
       </div>
 
-      {/* Footer luôn hiển thị ở dưới cùng */}
-      <Footer />
+      {/* 👇 5. Bọc Footer trong điều kiện này luôn */}
+      {shouldShowLayout && <Footer />}
     </div>
   );
 }
