@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// 👇 1. Import Context để biết ai đang đăng nhập
+//  1. Import Context để biết ai đang đăng nhập
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
-  // 👇 2. Lấy thông tin user và hàm logout từ kho dữ liệu
+  //  2. Lấy thông tin user và hàm logout từ kho dữ liệu
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
