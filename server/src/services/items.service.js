@@ -1,28 +1,82 @@
-const db = require('../config/db')
+const { getPool, sql } = require('../config/database');
 
-exports.findAll = async ({ q }={})=>{
-  if(q) return await db.query('SELECT * FROM items WHERE name LIKE ?', [`%${q}%`])
-  return await db.query('SELECT * FROM items')
+exports.findAll = async ({ q } = {}) => {
+  try {
+    const pool = await getPool();
+    if (q) {
+      const result = await pool.request()
+        .input('search', sql.NVarChar, `%${q}%`)
+        .query('SELECT * FROM items WHERE name LIKE @search');
+      return result.recordset;
+    }
+    const result = await pool.request().query('SELECT * FROM items');
+    return result.recordset;
+  } catch (error) {
+    console.error('Error finding all items:', error);
+    throw error;
+  }
 }
 
 exports.search = exports.findAll
 
-exports.findById = async (id)=>{
-  const rows = await db.query('SELECT * FROM items WHERE id=?', [id])
-  return rows[0] || null
-}
-
-exports.create = async (data)=>{
-  if(db.callProcedure){
-    return await db.callProcedure('create_item', [data.name, data.description])
+exports.findById = async (id) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request()
+      .input('id', sql.Int, id)
+      .query('SELECT * FROM items WHERE id = @id');
+    return result.recordset[0] || null;
+  } catch (error) {
+    console.error('Error finding item by id:', error);
+    throw error;
   }
-  const res = await db.query('INSERT INTO items (name, description) VALUES (?, ?)', [data.name, data.description])
-  return { insertId: res.insertId }
 }
 
-exports.score = async (id)=>{
-  // example of calling a function/procedure that calculates a score
-  if(db.callProcedure) return await db.callProcedure('calculate_score', [id])
-  // fallback: return dummy
-  return { score: 0 }
+exports.create = async (data) => {
+  try {
+    const pool = await getPool();
+    
+    // Try calling stored procedure if available
+    try {
+      const result = await pool.request()
+        .input('name', sql.NVarChar, data.name)
+        .input('description', sql.NVarChar, data.description)
+        .execute('create_item');
+      return { insertId: result.returnValue };
+    } catch (procError) {
+      // Fallback to regular INSERT if procedure doesn't exist
+      const result = await pool.request()
+        .input('name', sql.NVarChar, data.name)
+        .input('description', sql.NVarChar, data.description)
+        .query(`
+          INSERT INTO items (name, description) 
+          VALUES (@name, @description);
+          SELECT SCOPE_IDENTITY() as insertId;
+        `);
+      return { insertId: result.recordset[0].insertId };
+    }
+  } catch (error) {
+    console.error('Error creating item:', error);
+    throw error;
+  }
+}
+
+exports.score = async (id) => {
+  try {
+    const pool = await getPool();
+    
+    // Try calling stored procedure if available
+    try {
+      const result = await pool.request()
+        .input('id', sql.Int, id)
+        .execute('calculate_score');
+      return { score: result.recordset[0]?.score || 0 };
+    } catch (procError) {
+      // Fallback: return dummy score
+      return { score: 0 };
+    }
+  } catch (error) {
+    console.error('Error calculating score:', error);
+    return { score: 0 };
+  }
 }
