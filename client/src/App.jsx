@@ -1,14 +1,16 @@
 import React from 'react';
-// 👇 1. Thêm useLocation vào dòng này
+// 
 import { Routes, Route, useLocation } from 'react-router-dom';
 
 // 1. Layout & Components dùng chung
 import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 
-// ... (Các import khác giữ nguyên như cũ) ...
+// 2. Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import AuthContext from './context/AuthContext';
+
 import HomePage from './pages/public/HomePage';
 import CourseList from './pages/public/CourseList';
 import CourseDetail from './pages/public/CourseDetail';
@@ -35,7 +37,6 @@ import GuardianDashboard from './pages/guardian/GuardianDashboard';
 import ChildProgress from './pages/guardian/ChildProgress';
 
 function App() {
-  // 👇 2. Thêm đoạn logic kiểm tra đường dẫn này
   const location = useLocation();
   
   // Danh sách các trang KHÔNG muốn hiện Navbar/Footer
@@ -47,10 +48,10 @@ function App() {
   return (
     <div className="app-container">
       
-      {/* 👇 3. Bọc Navbar trong điều kiện này */}
+      {/*Bọc Navbar trong điều kiện này */}
       {shouldShowLayout && <Navbar />}
 
-      {/* 👇 4. Sửa padding: Nếu ở trang Login thì padding = 0 để full màn hình */}
+      {/*Sửa padding: Nếu ở trang Login thì padding = 0 để full màn hình */}
       <div className="main-content" style={{ minHeight: '80vh', padding: shouldShowLayout ? '20px' : '0' }}>
         <Routes>
           {/* --- PUBLIC ROUTES --- */}
@@ -91,7 +92,7 @@ function App() {
         </Routes>
       </div>
 
-      {/* 👇 5. Bọc Footer trong điều kiện này luôn */}
+      {/*Bọc Footer trong điều kiện này luôn */}
       {shouldShowLayout && <Footer />}
     </div>
   );
