@@ -8,10 +8,7 @@ import Footer from './components/Layout/Footer';
 // 2. Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
-
-// 👇 SỬA LỖI 1: Import trang TestAuth (Trang giao diện) chứ KHÔNG phải AuthContext (Kho dữ liệu)
-// Nếu bạn chưa có file này, hãy xóa dòng import này và xóa dòng Route bên dưới đi
-//import TestAuth from './pages/TestAuth'; 
+import Forgot from './pages/auth/Forgot';
 
 import HomePage from './pages/public/HomePage';
 import CourseList from './pages/public/CourseList';
@@ -53,14 +50,12 @@ function App() {
 
       <div className="main-content" style={{ minHeight: '80vh', padding: shouldShowLayout ? '20px' : '0' }}>
         <Routes>
-          {/* --- CÔNG CỤ TEST --- */}
-          {/*<Route path="/test-auth" element={<TestAuth />} /> */}
-
 
           {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot" element={<Forgot />} />
           <Route path="/courses" element={<CourseList />} />
           <Route path="/courses/:id" element={<CourseDetail />} />
 

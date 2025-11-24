@@ -59,7 +59,9 @@ const Login = () => {
           <span style={styles.text}>
             Chưa có tài khoản? <Link to="/register" style={styles.link}>Đăng ký</Link>
           </span>
-          <span style={{...styles.text, cursor: 'pointer'}}>Quên mật khẩu?</span>
+            <Link to="/forgot" style={styles.forgotLink}>
+            Quên mật khẩu?
+          </Link>
         </div>
 
       </div>

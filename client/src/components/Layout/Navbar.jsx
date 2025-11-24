@@ -46,18 +46,23 @@ const Navbar = () => {
             <>
               <li><Link to="/student/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
               <li><Link to="/my-learning" style={styles.link}>Khóa học của tôi</Link></li>
+              <li><Link to="/courses" style={styles.link}>Khám phá khóa học</Link></li>
             </>
           )}
 
           {user?.role === 'teacher' && (
             <>
               <li><Link to="/teacher/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
-              <li><Link to="/teacher/courses" style={styles.link}>Quản lý</Link></li>
+              <li><Link to="/teacher/courses" style={styles.link}>Khóa học của tôi</Link></li>
+              <li><Link to="/courses" style={styles.link}>Khám phá khóa học</Link></li>
             </>
           )}
 
           {user?.role === 'admin' && (
-            <li><Link to="/admin/dashboard" style={styles.link}>Quản trị</Link></li>
+            <>
+            <li><Link to="/admin/dashboard" style={styles.link}>Bảng điều khiển</Link></li>
+            <li><Link to="/admin/users" style={styles.link}>Quản lý người dùng </Link></li>
+            </>
           )}
         </ul>
 
@@ -123,7 +128,7 @@ const styles = {
     maxWidth: '1200px',
     padding: '10px 30px',
     background: 'linear-gradient(to right, #c471f5, #fa71cd)', 
-    borderRadius: '50px',
+    //borderRadius: '50px',
     boxShadow: '0 10px 25px rgba(196, 113, 245, 0.5)',
     color: 'white',
     fontFamily: "'Nunito', sans-serif",
