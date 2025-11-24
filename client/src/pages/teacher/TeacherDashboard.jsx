@@ -3,8 +3,8 @@ import React from 'react';
 const TeacherDashboard = () => {
   return (
     <div style={{ padding: '20px' }}>
-      <h2>Bảng điều khiển Giáo viên</h2>
-      <p>Quản lý khóa học, theo dõi học viên và nội dung giảng dạy.</p>
+      <h2>Instructor Dashboard</h2>
+      <p>Manage courses, track students and teaching content.</p>
     </div>
   );
 };

@@ -2,50 +2,24 @@ import React, { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
-// Danh sách tài khoản giả lập (Giống như Database)
-const MOCK_USERS = [
-  { 
-    id: 1, 
-    email: 'nguyenvana@gmail.com', 
-    password: '1', 
-    name: 'Nguyễn Văn A', 
-    role: 'student', 
-    avatar: 'https://i.pravatar.cc/150?img=3' 
-  },
-  { 
-    id: 2, 
-    email: 'nguyenvanb@gmail.com', 
-    password: '2', 
-    name: 'Nguyễn Văn B', 
-    role: 'teacher', 
-    avatar: 'https://i.pravatar.cc/150?img=11' 
-  },
-  { 
-    id: 3, 
-    email: 'nguyenvanc@gmail.com', 
-    password: '3', 
-    name: 'Nguyễn Văn C', 
-    role: 'admin', 
-    avatar: 'https://i.pravatar.cc/150?img=68' 
-  }
-];
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); 
 
-  // Hàm login bây giờ nhận Email và Password
+  // Login function for testing - accepts any email/password combination
   const login = (email, password) => {
-    // Tìm kiếm user trong danh sách giả
-    const foundUser = MOCK_USERS.find(
-      (u) => u.email === email && u.password === password
-    );
-
-    if (foundUser) {
-      setUser(foundUser);
-      return true; // Đăng nhập thành công
-    } else {
-      return false; // Sai email hoặc mật khẩu
+    // For testing purposes, create a mock user with any credentials
+    if (email && password) {
+      const mockUser = {
+        id: 1,
+        email: email,
+        name: email.split('@')[0], // Use email prefix as name
+        role: 'student', // Default role for testing
+        avatar: 'https://i.pravatar.cc/150?img=3'
+      };
+      setUser(mockUser);
+      return true; // Login successful
     }
+    return false; // Empty email or password
   };
 
   const logout = () => setUser(null);

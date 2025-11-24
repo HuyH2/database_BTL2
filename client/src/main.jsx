@@ -8,7 +8,7 @@ import { AuthProvider } from './context/AuthContext'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    {/*Bọc AuthProvider ra ngoài App */}
+    {/*Wrap AuthProvider outside App */}
     <AuthProvider>
       <App />
     </AuthProvider>
