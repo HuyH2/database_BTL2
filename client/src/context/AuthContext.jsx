@@ -1,20 +1,50 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
+// Danh sách tài khoản giả lập (Giống như Database)
+const MOCK_USERS = [
+  { 
+    id: 1, 
+    email: 'nguyenvana@gmail.com', 
+    password: '1', 
+    name: 'Nguyễn Văn A', 
+    role: 'student', 
+    avatar: 'https://i.pravatar.cc/150?img=3' 
+  },
+  { 
+    id: 2, 
+    email: 'nguyenvanb@gmail.com', 
+    password: '2', 
+    name: 'Nguyễn Văn B', 
+    role: 'teacher', 
+    avatar: 'https://i.pravatar.cc/150?img=11' 
+  },
+  { 
+    id: 3, 
+    email: 'nguyenvanc@gmail.com', 
+    password: '3', 
+    name: 'Nguyễn Văn C', 
+    role: 'admin', 
+    avatar: 'https://i.pravatar.cc/150?img=68' 
+  }
+];
+
 export const AuthProvider = ({ children }) => {
-  // Khởi tạo user là null (chưa đăng nhập)
-  // Để test, bạn có thể đổi null thành { name: 'Huy', role: 'student' }
   const [user, setUser] = useState(null); 
 
-  // Hàm đăng nhập giả lập (Nhận vào role muốn test)
-  const login = (role) => {
-    if (role === 'student') {
-      setUser({ id: 1, name: 'Nguyễn Văn A', role: 'student', avatar: 'https://i.pravatar.cc/150?img=3' });
-    } else if (role === 'teacher') {
-      setUser({ id: 2, name: 'Thầy Ba', role: 'teacher', avatar: 'https://i.pravatar.cc/150?img=11' });
-    } else if (role === 'admin') {
-      setUser({ id: 3, name: 'Admin', role: 'admin', avatar: 'https://i.pravatar.cc/150?img=68' });
+  // Hàm login bây giờ nhận Email và Password
+  const login = (email, password) => {
+    // Tìm kiếm user trong danh sách giả
+    const foundUser = MOCK_USERS.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (foundUser) {
+      setUser(foundUser);
+      return true; // Đăng nhập thành công
+    } else {
+      return false; // Sai email hoặc mật khẩu
     }
   };
 
