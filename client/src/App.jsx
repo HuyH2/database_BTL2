@@ -6,6 +6,7 @@ import Navbar from './components/Layout/Navbar';
 import Footer from './components/Layout/Footer';
 
 // 2. Pages
+import Profile from './pages/auth/Profile';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Forgot from './pages/auth/Forgot';
@@ -54,6 +55,7 @@ function App() {
         <Routes>
           <Route path="/forum" element={<ForumPage />} />
           <Route path="/quiz/:quizId" element={<QuizPlayer />} />
+          <Route path="/profile" element={<Profile />} />
           {/* --- PUBLIC ROUTES --- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
