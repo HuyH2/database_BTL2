@@ -1,5 +1,0 @@
-{
-  "name": "btl2",
-  "private": true,
-  "workspaces": ["client", "server"]
-}
