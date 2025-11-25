@@ -1,11 +1,10 @@
-const { getPool, sql } = require('../config/database');
+const db = require('../config/db');
 
 // Lấy tất cả course
 const getAllCourses = async () => {
   try {
-    const pool = await getPool();
-    const result = await pool.request().query('SELECT * FROM COURSE ORDER BY CourseID');
-    return result.recordset;
+    const rows = await db.query('SELECT * FROM COURSE ORDER BY CourseID')
+    return rows
   } catch (error) {
     console.error('Error getting all courses:', error);
     throw error;
@@ -15,11 +14,8 @@ const getAllCourses = async () => {
 // Lấy 1 course theo ID
 const getCourseById = async (id) => {
   try {
-    const pool = await getPool();
-    const result = await pool.request()
-      .input('CourseID', sql.Int, id)
-      .query('SELECT * FROM COURSE WHERE CourseID = @CourseID');
-    return result.recordset[0];
+    const rows = await db.query('SELECT * FROM COURSE WHERE CourseID = ?', [id])
+    return rows[0]
   } catch (error) {
     console.error('Error getting course by ID:', error);
     throw error;
@@ -47,25 +43,17 @@ const createCourse = async (data) => {
   }
 
   try {
-    const pool = await getPool();
-    const result = await pool.request()
-      .input('Name', sql.NVarChar, data.name)
-      .input('Description', sql.NVarChar, data.description || null)
-      .input('Category', sql.NVarChar, data.category || null)
-      .input('Language', sql.NVarChar, data.language || null)
-      .input('Price', sql.Decimal, data.price)
-      .input('Duration', sql.Int, data.duration)
-      .input('InstructorID', sql.Int, data.instructorId || 1)
-      .query(`
-        INSERT INTO COURSE (Name, Description, Category, Language, Price, Duration, InstructorID) 
-        VALUES (@Name, @Description, @Category, @Language, @Price, @Duration, @InstructorID);
-        SELECT SCOPE_IDENTITY() as CourseID;
-      `);
-
-    // Lấy course vừa tạo
-    const newCourseId = result.recordset[0].CourseID;
-    const newCourse = await getCourseById(newCourseId);
-    return newCourse;
+    if (db.client === 'mysql') {
+      const [res] = await db.raw(`INSERT INTO COURSE (Name, Description, Category, Language, Price, Duration, InstructorID) VALUES (?, ?, ?, ?, ?, ?, ?)`, [data.name, data.description || null, data.category || null, data.language || null, data.price, data.duration, data.instructorId || 1])
+      const newCourseId = res && res.insertId
+      const newCourse = await getCourseById(newCourseId)
+      return newCourse
+    } else {
+      const rows = await db.query(`INSERT INTO COURSE (Name, Description, Category, Language, Price, Duration, InstructorID) VALUES (?, ?, ?, ?, ?, ?, ?); SELECT SCOPE_IDENTITY() as CourseID`, [data.name, data.description || null, data.category || null, data.language || null, data.price, data.duration, data.instructorId || 1])
+      const newCourseId = rows && rows[0] && rows[0].CourseID
+      const newCourse = await getCourseById(newCourseId);
+      return newCourse;
+    }
   } catch (error) {
     console.error('Error creating course:', error);
     throw error;
@@ -87,35 +75,27 @@ const updateCourse = async (id, data) => {
   }
 
   try {
-    const pool = await getPool();
-    
-    // Tạo câu query động
     const updateFields = [];
-    const request = pool.request().input('CourseID', sql.Int, id);
-
+    const params = [];
+    const addParam = (value) => { params.push(value); return '?'; }
+    
     if (data.name) {
-      updateFields.push('Name = @Name');
-      request.input('Name', sql.NVarChar, data.name);
+      updateFields.push('Name = ' + addParam(data.name));
     }
     if (data.description !== undefined) {
-      updateFields.push('Description = @Description');
-      request.input('Description', sql.NVarChar, data.description);
+      updateFields.push('Description = ' + addParam(data.description));
     }
     if (data.category !== undefined) {
-      updateFields.push('Category = @Category');
-      request.input('Category', sql.NVarChar, data.category);
+      updateFields.push('Category = ' + addParam(data.category));
     }
     if (data.language !== undefined) {
-      updateFields.push('Language = @Language');
-      request.input('Language', sql.NVarChar, data.language);
+      updateFields.push('Language = ' + addParam(data.language));
     }
     if (data.price !== undefined) {
-      updateFields.push('Price = @Price');
-      request.input('Price', sql.Decimal, data.price);
+      updateFields.push('Price = ' + addParam(data.price));
     }
     if (data.duration !== undefined) {
-      updateFields.push('Duration = @Duration');
-      request.input('Duration', sql.Int, data.duration);
+      updateFields.push('Duration = ' + addParam(data.duration));
     }
 
     if (updateFields.length === 0) {
@@ -123,12 +103,11 @@ const updateCourse = async (id, data) => {
       err.statusCode = 400;
       throw err;
     }
+    const result = await db.raw(`UPDATE COURSE SET ${updateFields.join(', ')} WHERE CourseID = ?`, [...params, id])
 
-    const result = await request.query(
-      `UPDATE COURSE SET ${updateFields.join(', ')} WHERE CourseID = @CourseID`
-    );
-
-    if (result.rowsAffected[0] === 0) {
+    // For MySQL, result[0].affectedRows; for MSSQL, result.rowsAffected
+    const affected = (db.client === 'mysql') ? result[0].affectedRows : (result.rowsAffected ? result.rowsAffected[0] : 0)
+    if (affected === 0) {
       const err = new Error('Course not found');
       err.statusCode = 404;
       throw err;
@@ -152,12 +131,9 @@ const deleteCourse = async (id) => {
       throw err;
     }
 
-    const pool = await getPool();
-    const result = await pool.request()
-      .input('CourseID', sql.Int, id)
-      .query('DELETE FROM COURSE WHERE CourseID = @CourseID');
-    
-    if (result.rowsAffected[0] === 0) {
+    const result = await db.raw('DELETE FROM COURSE WHERE CourseID = ?', [id])
+    const affected = (db.client === 'mysql') ? result[0].affectedRows : (result.rowsAffected ? result.rowsAffected[0] : 0)
+    if (affected === 0) {
       const err = new Error('Course not found');
       err.statusCode = 404;
       throw err;

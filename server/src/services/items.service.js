@@ -1,19 +1,13 @@
-const { getPool, sql } = require('../config/database');
+const db = require('../config/db')
 
 exports.findAll = async ({ q } = {}) => {
   try {
-    const pool = await getPool();
-    if (q) {
-      const result = await pool.request()
-        .input('search', sql.NVarChar, `%${q}%`)
-        .query('SELECT * FROM items WHERE name LIKE @search');
-      return result.recordset;
-    }
-    const result = await pool.request().query('SELECT * FROM items');
-    return result.recordset;
+    if (q) return await db.query('SELECT * FROM COURSE WHERE Name LIKE ?', [`%${q}%`])
+    // return columns matching client expectations (id, title, price, image, description)
+    return await db.query('SELECT CourseID as id, Name as title, Description, Price, NULL as image FROM COURSE')
   } catch (error) {
-    console.error('Error finding all items:', error);
-    throw error;
+    console.error('Error finding all items (courses):', error)
+    throw error
   }
 }
 
@@ -21,62 +15,52 @@ exports.search = exports.findAll
 
 exports.findById = async (id) => {
   try {
-    const pool = await getPool();
-    const result = await pool.request()
-      .input('id', sql.Int, id)
-      .query('SELECT * FROM items WHERE id = @id');
-    return result.recordset[0] || null;
+    const rows = await db.query('SELECT CourseID as id, Name as title, Description, Price, NULL as image FROM COURSE WHERE CourseID = ?', [id])
+    return rows[0] || null
   } catch (error) {
-    console.error('Error finding item by id:', error);
-    throw error;
+    console.error('Error finding item by id:', error)
+    throw error
   }
 }
 
 exports.create = async (data) => {
   try {
-    const pool = await getPool();
-    
-    // Try calling stored procedure if available
+    // Try stored procedure - callProcedure returns rows if used
     try {
-      const result = await pool.request()
-        .input('name', sql.NVarChar, data.name)
-        .input('description', sql.NVarChar, data.description)
-        .execute('create_item');
-      return { insertId: result.returnValue };
-    } catch (procError) {
-      // Fallback to regular INSERT if procedure doesn't exist
-      const result = await pool.request()
-        .input('name', sql.NVarChar, data.name)
-        .input('description', sql.NVarChar, data.description)
-        .query(`
-          INSERT INTO items (name, description) 
-          VALUES (@name, @description);
-          SELECT SCOPE_IDENTITY() as insertId;
-        `);
-      return { insertId: result.recordset[0].insertId };
+      const res = await db.callProcedure('create_item', [data.name, data.description])
+      // If procedure returns insert id in some format, try to read
+      if (res && res[0] && res[0].insertId) return { insertId: res[0].insertId }
+    } catch (procErr) {
+      // ignore and fallback
+    }
+
+    // Fallback to direct INSERT
+    if (db.client === 'mysql') {
+      const [result] = await db.raw('INSERT INTO items (name, description) VALUES (?, ?)', [data.name, data.description])
+      const insertId = result && result.insertId
+      return { insertId }
+    } else {
+      // mssql: use query returning SCOPE_IDENTITY()
+      const rows = await db.query('INSERT INTO items (name, description) VALUES (?, ?); SELECT SCOPE_IDENTITY() as insertId', [data.name, data.description])
+      const insertId = rows && rows[0] && rows[0].insertId
+      return { insertId }
     }
   } catch (error) {
-    console.error('Error creating item:', error);
-    throw error;
+    console.error('Error creating item:', error)
+    throw error
   }
 }
 
 exports.score = async (id) => {
   try {
-    const pool = await getPool();
-    
-    // Try calling stored procedure if available
     try {
-      const result = await pool.request()
-        .input('id', sql.Int, id)
-        .execute('calculate_score');
-      return { score: result.recordset[0]?.score || 0 };
-    } catch (procError) {
-      // Fallback: return dummy score
-      return { score: 0 };
+      const res = await db.callProcedure('calculate_score', [id])
+      return { score: (res && res[0] && res[0].score) || 0 }
+    } catch (procErr) {
+      return { score: 0 }
     }
   } catch (error) {
-    console.error('Error calculating score:', error);
-    return { score: 0 };
+    console.error('Error calculating score:', error)
+    return { score: 0 }
   }
 }

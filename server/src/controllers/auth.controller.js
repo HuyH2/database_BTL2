@@ -1,4 +1,4 @@
-const { getPool, sql } = require('../config/database');
+const db = require('../config/db');
 
 const register = async (req, res) => {
   try {
@@ -16,35 +16,20 @@ const register = async (req, res) => {
     const today = new Date();
     const age = today.getFullYear() - birthDate.getFullYear();
 
-    const pool = await getPool();
-    
-    // Kiểm tra email đã tồn tại chưa
-    const checkEmailResult = await pool.request()
-      .input('Email', sql.NVarChar, email)
-      .query('SELECT UserID FROM USER_ACCOUNT WHERE Email = @Email');
-    
-    if (checkEmailResult.recordset.length > 0) {
+    const checkEmailRows = await db.query('SELECT UserID FROM USER_ACCOUNT WHERE Email = ?', [email])
+    if (checkEmailRows.length > 0) {
       return res.status(409).json({ error: 'Email already exists' });
     }
 
     // Insert user mới
-    const result = await pool.request()
-      .input('UserName', sql.NVarChar, userName)
-      .input('Email', sql.NVarChar, email)
-      .input('UserPassword', sql.NVarChar, password)
-      .input('Gender', sql.Char, gender)
-      .input('DateOfBirth', sql.Date, dateOfBirth)
-      .input('UserAge', sql.Int, age)
-      .input('Status', sql.NVarChar, 'Active')
-      .input('OrganizationID', sql.Int, organizationId || null)
-      .query(`
-        INSERT INTO USER_ACCOUNT (UserName, Email, UserPassword, Gender, DateOfBirth, UserAge, Status, OrganizationID)
-        VALUES (@UserName, @Email, @UserPassword, @Gender, @DateOfBirth, @UserAge, @Status, @OrganizationID);
-        
-        SELECT SCOPE_IDENTITY() as UserID;
-      `);
-
-    const newUserId = result.recordset[0].UserID;
+    if (db.client === 'mysql') {
+      const [ins] = await db.raw(`INSERT INTO USER_ACCOUNT (UserName, Email, UserPassword, Gender, DateOfBirth, UserAge, Status, OrganizationID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [userName, email, password, gender, dateOfBirth, age, 'Active', organizationId || null])
+      const newUserId = ins && ins.insertId
+      res.status(201).json({ message: 'User registered successfully', userId: newUserId })
+      return
+    }
+    const rows = await db.query(`INSERT INTO USER_ACCOUNT (UserName, Email, UserPassword, Gender, DateOfBirth, UserAge, Status, OrganizationID) VALUES (?, ?, ?, ?, ?, ?, ?, ?); SELECT SCOPE_IDENTITY() as UserID`, [userName, email, password, gender, dateOfBirth, age, 'Active', organizationId || null])
+    const newUserId = rows && rows[0] && rows[0].UserID
 
     res.status(201).json({ 
       message: 'User registered successfully',
@@ -71,22 +56,12 @@ const login = async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    const pool = await getPool();
-    
-    const result = await pool.request()
-      .input('Email', sql.NVarChar, email)
-      .input('Password', sql.NVarChar, password)
-      .query(`
-        SELECT UserID, UserName, Email, Gender, DateOfBirth, Status, OrganizationID
-        FROM USER_ACCOUNT 
-        WHERE Email = @Email AND UserPassword = @Password
-      `);
-
-    if (result.recordset.length === 0) {
+    const rows = await db.query(`SELECT UserID, UserName, Email, Gender, DateOfBirth, Status, OrganizationID FROM USER_ACCOUNT WHERE Email = ? AND UserPassword = ?`, [email, password])
+    if (!rows || rows.length === 0) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    const user = result.recordset[0];
+    const user = rows[0]
     
     if (user.Status !== 'Active') {
       return res.status(403).json({ error: 'Account is not active' });

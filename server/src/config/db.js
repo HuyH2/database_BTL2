@@ -27,6 +27,8 @@ if (DB_CLIENT === 'mssql') {
   }
 
   module.exports = {
+    client: 'mssql',
+    sql: mssql,
     query: async (sql, params = []) => {
       const pool = await mssql.connect(config)
       try {
@@ -39,6 +41,17 @@ if (DB_CLIENT === 'mssql') {
         await pool.close()
       }
     },
+    raw: async (sql, params = []) => {
+      // returns the entire result object for non-select queries
+      const pool = await mssql.connect(config)
+      try {
+        const request = pool.request()
+        params.forEach((p, i) => request.input(`p${i}`, p))
+        const finalSql = convertPlaceholders(sql, params)
+        const result = await request.query(finalSql)
+        return result
+      } finally { await pool.close() }
+    },
     callProcedure: async (name, params = []) => {
       const pool = await mssql.connect(config)
       try {
@@ -46,9 +59,7 @@ if (DB_CLIENT === 'mssql') {
         params.forEach((p, i) => request.input(`p${i}`, p))
         const result = await request.execute(name)
         return result.recordset
-      } finally {
-        await pool.close()
-      }
+      } finally { await pool.close() }
     },
     connectDB: async () => {
       const pool = await mssql.connect(config)
@@ -60,9 +71,15 @@ if (DB_CLIENT === 'mssql') {
   const mysql = require('mysql2/promise')
   const pool = mysql.createPool({ host: DB_HOST || 'localhost', port: DB_PORT ? Number(DB_PORT) : 3306, user: DB_USER || 'root', password: DB_PASSWORD || '', database: DB_NAME || '', waitForConnections: true, connectionLimit: 10 })
   module.exports = {
+    client: 'mysql',
     query: async (sql, params = []) => {
       const [rows] = await pool.execute(sql, params)
       return rows
+    },
+    raw: async (sql, params = []) => {
+      // returns the full result object (rows, fields) for non-select queries
+      const result = await pool.execute(sql, params)
+      return result
     },
     callProcedure: async (name, params = []) => {
       const placeholders = params.map(() => '?').join(',')
