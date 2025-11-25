@@ -14,7 +14,7 @@ const CourseCard = ({ course }) => {
         <h3 style={{ fontSize: '16px', margin: '0 0 10px' }}>{title}</h3>
         <p style={{ color: '#e74c3c', fontWeight: 'bold' }}>{price.toLocaleString()} đ</p>
         <Link to={`/courses/${id}`}>
-          <button style={{ width: '100%', padding: '8px', background: '#3498db', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Xem ngay</button>
+          <button style={{ width: '100%', padding: '8px', background: 'linear-gradient(to right, #c471f5, #fa71cd)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Xem ngay</button>
         </Link>
       </div>
     </div>

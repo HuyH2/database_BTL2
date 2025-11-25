@@ -96,13 +96,43 @@ const Navbar = () => {
 
                   <div style={styles.separator}></div>
 
-                  <Link to="/profile" style={styles.dropdownItem}>👤 Hồ sơ cá nhân</Link>
-                  <Link to="/settings" style={styles.dropdownItem}>⚙️ Cài đặt</Link>
-                  
-                  <div style={styles.separator}></div>
+                  <Link to="/profile" style={styles.dropdownItem}>Hồ sơ cá nhân</Link>
+                  {/* --- MỤC DÀNH RIÊNG CHO STUDENT --- */}
+                      {user.role === 'student' && (
+                        <>
+                          <Link to="/grades" style={styles.dropdownItem}>Kết quả học tập</Link>
+                          <Link to="/my-certificates" style={styles.dropdownItem}>Chứng chỉ của tôi</Link>
+                          <Link to="/calendar" style={styles.dropdownItem}>Lịch học</Link>
+                        </>
+                      )}
+
+                  {/* --- MỤC DÀNH RIÊNG CHO TEACHER --- */}
+                      {user.role === 'teacher' && (
+                        <>
+                          <Link to="/teacher/create-course" style={styles.dropdownItem}>Tạo khóa học mới</Link>
+                          <Link to="/teacher/student-tracking" style={styles.dropdownItem}>Theo dõi học viên</Link>
+                          <Link to="/reports" style={styles.dropdownItem}>Báo cáo giảng dạy</Link>
+                        </>
+                      )}
+
+                  {/* --- MỤC DÀNH RIÊNG CHO ADMIN --- */}
+                      {user.role === 'admin' && (
+                        <>
+                          <Link to="/admin/users" style={styles.dropdownItem}>Quản lý người dùng</Link>
+                          <Link to="/admin/approvals" style={styles.dropdownItem}>Phê duyệt khóa học</Link>
+                          <Link to="/admin/organizations" style={styles.dropdownItem}>Quản lý tổ chức</Link>
+                        </>
+                      )}
+
+                      <div style={styles.separator}></div>
+    
+                  {/* --- MỤC CÀI ĐẶT CHUNG --- */}
+                      <Link to="/settings" style={styles.dropdownItem}>Cài đặt tài khoản</Link>
+    
+                      <div style={styles.separator}></div>
                   
                   <div onClick={handleLogout} style={{...styles.dropdownItem, color: '#e74c3c', fontWeight: '700'}}>
-                    🚪 Đăng xuất
+                    Đăng xuất
                   </div>
                 </div>
               )}
@@ -131,7 +161,7 @@ const styles = {
     maxWidth: '1200px',
     padding: '10px 30px',
     background: 'linear-gradient(to right, #c471f5, #fa71cd)', 
-    //borderRadius: '50px',
+    borderRadius: '50px',
     boxShadow: '0 10px 25px rgba(196, 113, 245, 0.5)',
     color: 'white',
     fontFamily: "'Nunito', sans-serif",
