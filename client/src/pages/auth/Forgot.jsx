@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-//  Giả lập Database User để kiểm tra (Sau này thay bằng API)
-const MOCK_EMAILS = ['nguyenvana@gmail.com', 'nguyenvanb@gmail.com', 'nguyenvanc@gmail.com'];
+//1. Import API
+import authApi from '../../api/auth'; 
 
 const Forgot = () => {
   // --- STATE ---
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  
-  // State cho bộ đếm ngược
+  const [loading, setLoading] = useState(false); // Thêm trạng thái loading
   const [countdown, setCountdown] = useState(0);
 
   // --- EFFECT: Xử lý đếm ngược ---
@@ -21,42 +19,51 @@ const Forgot = () => {
     }
   }, [countdown]);
 
-  // --- HÀM KIỂM TRA EMAIL HỢP LỆ (REGEX) ---
+  // --- HÀM CHECK REGEX ---
   const validateEmail = (email) => {
-    return String(email)
-      .toLowerCase()
-      .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      );
+    return String(email).toLowerCase()
+      .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
   };
 
   // --- XỬ LÝ GỬI ---
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // Thêm async
     e.preventDefault();
     setError('');
     setMessage('');
 
-    // 1. Kiểm tra rỗng
     if (!email) {
       setError('Vui lòng nhập email!');
       return;
     }
 
-    // 2. Kiểm tra định dạng email
     if (!validateEmail(email)) {
-      setError('Email không đúng định dạng (VD: abc@gmail.com)');
+      setError('Email không đúng định dạng!');
       return;
     }
 
-    // 3. Kiểm tra email có tồn tại trong hệ thống không?
-    if (!MOCK_EMAILS.includes(email)) {
-      setError('Email này chưa được đăng ký trong hệ thống!');
-      return;
-    }
+    try {
+      setLoading(true); // Bật loading
 
-    // 4. Gửi thành công -> Bắt đầu đếm ngược
-    setMessage(`Link khôi phục đã được gửi tới: ${email}`);
-    setCountdown(60); // Đếm ngược 60 giây
+      // 👇 2. GỌI API KIỂM TRA EMAIL THẬT
+      const res = await authApi.checkEmail({ email });
+      
+      // Nếu Backend trả về exists: false -> Email chưa đăng ký
+      if (!res.exists) {
+        setError('Email này chưa được đăng ký trong hệ thống!');
+        return;
+      }
+
+      // Nếu tồn tại -> Thông báo thành công & Đếm ngược
+      setMessage(`Link khôi phục đã được gửi tới: ${email}`);
+      setCountdown(60);
+
+    } catch (err) {
+      // Xử lý lỗi từ Server
+      console.error("Lỗi check mail:", err);
+      setError("Lỗi kết nối server hoặc email không hợp lệ.");
+    } finally {
+      setLoading(false); // Tắt loading
+    }
   };
 
   return (
@@ -76,19 +83,18 @@ const Forgot = () => {
             style={styles.input} 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={countdown > 0} // Không cho sửa email khi đang đếm ngược
+            disabled={countdown > 0 || loading} // Khóa khi đang gửi hoặc đếm ngược
           />
           
           {error && <p style={styles.errorMsg}>⚠️ {error}</p>}
           {message && <p style={styles.successMsg}>✅ {message}</p>}
 
-          {/* Nút bấm biến hình khi đếm ngược */}
           <button 
             type="submit" 
-            style={countdown > 0 ? styles.disabledButton : styles.button}
-            disabled={countdown > 0}
+            style={(countdown > 0 || loading) ? styles.disabledButton : styles.button}
+            disabled={countdown > 0 || loading}
           >
-            {countdown > 0 ? `Gửi lại sau ${countdown}s` : 'Gửi yêu cầu'}
+            {loading ? 'Đang kiểm tra...' : (countdown > 0 ? `Gửi lại sau ${countdown}s` : 'Gửi yêu cầu')}
           </button>
         </form>
 

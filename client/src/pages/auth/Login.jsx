@@ -1,69 +1,61 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // 1. Import Context
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
-  // --- PHẦN LOGIC (Xử lý dữ liệu) ---
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Thêm hiệu ứng loading cho nút
 
-  const handleLogin = (e) => {
-    e.preventDefault(); // Chặn load lại trang
+  const handleLogin = async (e) => { // Thêm async
+    e.preventDefault();
     setError('');
+    setIsLoading(true); // Bật loading
     
-    // Gọi hàm login giả lập
-    const isSuccess = login(email, password);
+    // Gọi hàm login (bây giờ là hàm async gọi API)
+    const result = await login(email, password);
 
-    if (isSuccess) {
-      navigate('/'); // Chuyển về trang chủ
+    if (result && result.success) {
+      navigate('/'); 
     } else {
-      setError('Sai thông tin rồi!');
+      // Hiển thị lỗi thật từ server trả về
+      setError(result?.message || 'Đăng nhập thất bại');
     }
+    setIsLoading(false); // Tắt loading
   };
 
-  // --- PHẦN GIAO DIỆN (UI) ---
   return (
     <div style={styles.container}>
       <div style={styles.loginBox}>
-        
         <h2 style={styles.title}>ĐĂNG NHẬP</h2>
-
-        {/* Form xử lý */}
+        
         <form style={styles.form} onSubmit={handleLogin}>
           <input 
-            type="text" 
-            placeholder="Email (VD: nguyenvana@gmail.com)" 
-            style={styles.input} 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text" placeholder="Email" style={styles.input} 
+            value={email} onChange={(e) => setEmail(e.target.value)}
           />
           <input 
-            type="password" 
-            placeholder="Mật khẩu (VD: 1)" 
-            style={styles.input} 
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="password" placeholder="Mật khẩu" style={styles.input} 
+            value={password} onChange={(e) => setPassword(e.target.value)}
           />
           
-          {/* Hiện lỗi màu đỏ nếu nhập sai */}
           {error && <p style={styles.errorMsg}>{error}</p>}
 
-          <button type="submit" style={styles.button}>Login</button>
+          <button type="submit" style={styles.button} disabled={isLoading}>
+            {isLoading ? 'Đang xử lý...' : 'Login'}
+          </button>
         </form>
 
         <div style={styles.footer}>
           <span style={styles.text}>
             Chưa có tài khoản? <Link to="/register" style={styles.link}>Đăng ký</Link>
           </span>
-            <Link to="/forgot" style={styles.forgotLink}>
-            Quên mật khẩu?
-          </Link>
+          <Link to="/forgot" style={styles.forgotLink}>Quên mật khẩu?</Link>
         </div>
-
       </div>
     </div>
   );

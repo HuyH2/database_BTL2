@@ -1,18 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\client",
-    "\\client\\src",
-    "\\client\\src\\pages",
-    "\\client\\src\\pages\\admin",
-    "\\server",
-    "\\server\\src",
-    "\\server\\src\\config",
-    "\\server\\src\\controllers",
-    "\\server\\src\\routes",
-    "\\server\\src\\scripts",
-    "\\server\\src\\services"
+    ""
   ],
-  "SelectedNode": "\\server\\src\\config\\db.js",
+  "SelectedNode": "\\04_trigger.sql",
   "PreviewInSolutionExplorer": false
 }

@@ -1,39 +1,44 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import authApi from '../../api/auth'; // Import trực tiếp API
 
 const Register = () => {
   const navigate = useNavigate();
-
-  // --- 1. STATE ---
+  // ... (các state name, email, password, confirmPassword, role giữ nguyên) ...
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('student'); //Mặc định là Học viên
+  const [role, setRole] = useState('student'); 
   const [error, setError] = useState('');
 
-  // --- 2. XỬ LÝ ĐĂNG KÝ ---
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Kiểm tra dữ liệu cơ bản
-    if (!name || !email || !password || !confirmPassword) {
-      setError('Vui lòng điền đầy đủ thông tin!');
-      return;
-    }
-
+    // Validate cơ bản ở client
     if (password !== confirmPassword) {
-      setError('Mật khẩu nhập lại không khớp!');
+      setError('Mật khẩu không khớp!');
       return;
     }
 
-    // Giả lập đăng ký thành công
-    // (Lưu ý: Sau này khi gửi API, nhớ gửi cả biến 'role' lên server)
-    console.log("Đăng ký user:", { name, email, role }); 
-    
-    alert(`Đăng ký tài khoản ${role === 'student' ? 'Học viên' : 'Giáo viên'} thành công!`);
-    navigate('/login');
+    try {
+      // GỌI API ĐĂNG KÝ
+      const res = await authApi.register({ 
+        userName: name, // Chú ý tên trường phải khớp với Backend (userName hay name)
+        email, 
+        password, 
+        role 
+      });
+
+      if (res.success) {
+        alert("Đăng ký thành công! Vui lòng đăng nhập.");
+        navigate('/login');
+      }
+    } catch (err) {
+      // Lấy lỗi từ backend (ví dụ: Email đã tồn tại)
+      setError(err.response?.data?.message || "Đăng ký thất bại");
+    }
   };
 
   // --- 3. GIAO DIỆN ---
