@@ -1,6 +1,8 @@
 ﻿USE BTL2;
 GO
 
+
+----2.4----
 -- FUNCTION 1: Đếm số lượng video của một khoá học
 CREATE OR ALTER FUNCTION fn_CountVideosInCourse
 (

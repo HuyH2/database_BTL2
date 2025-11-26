@@ -4,6 +4,7 @@ GO
 --------------------------------------------------------------------
 -- CLEAN OLD TEST DATA
 --------------------------------------------------------------------
+DELETE FROM USER_ACCOUNT WHERE UserID > 15;
 DELETE FROM STUDENT WHERE UserID > 15;
 DELETE FROM INSTRUCTOR WHERE UserID > 15;
 DELETE FROM ADMIN WHERE UserID > 15;
@@ -11,6 +12,261 @@ DELETE FROM USER_ACCOUNT WHERE Email LIKE '%role_test%';
 DELETE FROM USER_ACCOUNT WHERE Email LIKE '%age1%';
 DELETE FROM USER_ACCOUNT WHERE Email LIKE '%noquiz%';
 GO
+
+/**************************************************************************
+    2.1 — CRUD
+**************************************************************************/
+
+PRINT '--- TEST 1: AddUser hợp lệ ---';
+BEGIN TRY
+    EXEC dbo.usp_AddUser 
+        @UserName = 'TestUser1',
+        @Email = 'testuser1@mail.com',
+        @UserPassword = '123',
+        @Gender = 'M',
+        @DateOfBirth = '2000-01-01',
+        @Status = 'Active',
+        @OrganizationID = 1;
+    PRINT 'PASSED: User thêm thành công.';
+END TRY
+BEGIN CATCH
+    PRINT 'FAILED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST 2: Email sai định dạng ---';
+BEGIN TRY
+    EXEC usp_AddUser
+        'BadEmail', 'email-sai-dinh-dang', '123', 'M', '2000-01-01', 'Active', 1;
+    PRINT 'FAILED: Trigger không bắt sai email!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST 3: Email trùng ---';
+BEGIN TRY
+    EXEC usp_AddUser
+        'AnotherUser', 'testuser4@mail.com', '123', 'M', '2000-01-01', 'Active', 1;
+    PRINT 'FAILED: Email trùng!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST 4: Gender sai ---';
+BEGIN TRY
+    EXEC usp_AddUser 
+        'TestUser2', 'test2@mail.com', '123', 'X', '2000-01-01', 'Active', 1;
+    PRINT 'FAILED: Gender sai mà không bị bắt!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST 5: DOB tương lai ---';
+BEGIN TRY
+    EXEC usp_AddUser
+        'FutureUser', 'future@mail.com', '123', 'M', '3000-01-01', 'Active', 1;
+    PRINT 'FAILED: DOB sai mà không bị bắt!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST 6: OrganizationID không tồn tại ---';
+BEGIN TRY
+    EXEC usp_AddUser
+        'BadOrgUser', 'badorg@mail.com', '123', 'M', '2000-01-01', 'Active', 9999;
+    PRINT 'FAILED: OrgID sai mà không bị bắt!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+--TEST CASE cho usp_UpdateUser
+PRINT '--- TEST UPDATE 1: UserID không tồn tại ---';
+BEGIN TRY
+    EXEC usp_UpdateUser 999,
+        'Name', 'new@mail.com', '123', 'M', '2000-01-01', 'Active', 1;
+    PRINT 'FAILED: Không tồn tại mà không báo lỗi!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST UPDATE 2: Email trùng user khác ---';
+BEGIN TRY
+    EXEC usp_UpdateUser 1,
+        'Test', 'testuser1@mail.com', '123', 'M', '2000-01-01', 'Active', 1;
+    PRINT 'FAILED: Email trùng không bị chặn!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED: ';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST UPDATE 3: Gender sai ---';
+BEGIN TRY
+    EXEC usp_UpdateUser 1,
+        'Test', 'testupdate@mail.com', '123', 'X', '2000-01-01', 'Active', 1;
+    PRINT 'FAILED: Gender sai không bị bắt!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST UPDATE 4: DOB tương lai ---';
+BEGIN TRY
+    EXEC usp_UpdateUser 1,
+        'Test', 'testupdate@mail.com', '123', 'M', '3000-01-01', 'Active', 1;
+    PRINT 'FAILED: DOB tương lai không bị bắt!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST UPDATE 5: Update hợp lệ ---';
+BEGIN TRY
+    EXEC usp_UpdateUser 1,
+        'Updated User', 'updated@mail.com', 'newpass', 'F', '1999-01-01', 'Inactive', 1;
+    PRINT 'PASSED: Update thành công!';
+END TRY
+BEGIN CATCH
+    PRINT 'FAILED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+--TEST CASE cho usp_DeleteUser
+PRINT '--- TEST DELETE 1: UserID không tồn tại ---';
+BEGIN TRY
+    EXEC usp_DeleteUser 999;
+    PRINT 'FAILED: User không tồn tại mà không báo lỗi!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST DELETE 2: User là Student ---';
+BEGIN TRY
+    EXEC usp_DeleteUser 1;   -- UserID 1 là Student
+    PRINT 'FAILED: Student mà vẫn delete được!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST DELETE 3: User là Instructor ---';
+BEGIN TRY
+    EXEC usp_DeleteUser 6;
+    PRINT 'FAILED: Instructor mà vẫn delete được!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST DELETE 4: User là Admin ---';
+BEGIN TRY
+    EXEC usp_DeleteUser 11;
+    PRINT 'FAILED: Admin mà vẫn delete được!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST DELETE 5: User có POST ---';
+BEGIN TRY
+    EXEC usp_DeleteUser 1;  -- AuthorID = 1 có post
+    PRINT 'FAILED: Có POST mà vẫn delete!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+PRINT '--- TEST DELETE 6: User tạo FORUM ---';
+BEGIN TRY
+    EXEC usp_DeleteUser 6;   -- CreatorID = 6
+    PRINT 'FAILED: Creator mà vẫn delete!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+    PRINT '--- TEST DELETE 7: User là MODERATOR ---';
+BEGIN TRY
+    EXEC usp_DeleteUser 11;
+    PRINT 'FAILED: Moderator mà vẫn delete!';
+END TRY
+BEGIN CATCH
+    PRINT 'PASSED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
+
+EXEC dbo.usp_AddUser 
+    'DeleteMe', 'deleteme@mail.com', '123', 'M', '2000-01-01', 'Active', NULL;
+SELECT * FROM USER_ACCOUNT WHERE Email = 'deleteme@mail.com';
+
+PRINT '--- TEST DELETE 8: Xóa user hợp lệ ---';
+BEGIN TRY
+    EXEC dbo.usp_DeleteUser 16;
+    PRINT 'PASSED: Xóa thành công!';
+END TRY
+BEGIN CATCH
+    PRINT 'FAILED';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+PRINT '---------------------------------------------';
+
 
 
 /**************************************************************************

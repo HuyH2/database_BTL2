@@ -1,6 +1,8 @@
 USE BTL2;
 Go
 
+
+---1.2---
 INSERT INTO ORGANIZATION (Name, Address, Phone, Email, TaxID, Website)
 VALUES
 ('Tech Academy', '123 Main St', '0987654321', 'contact@techacademy.com', 'TAX001', 'techacademy.com'),
@@ -90,7 +92,7 @@ VALUES
 (1, 0, 5);
 
 
--- COURSE 1 — Machine Learning 101 (LessonID = 1)
+-- COURSE 1   Machine Learning 101 (LessonID = 1)
 INSERT INTO CONTENT_ITEM (Title, Description, LessonID)
 VALUES
 ('ML Video 1', 'Intro to ML concepts', 1),
@@ -105,7 +107,7 @@ VALUES
 ('ML Document 2', 'Regression notes', 1),
 ('ML Document 3', 'Classification notes', 1);
 
--- COURSE 2 — Cloud Basics (LessonID = 2)
+-- COURSE 2   Cloud Basics (LessonID = 2)
 INSERT INTO CONTENT_ITEM (Title, Description, LessonID)
 VALUES
 ('Cloud Video 1', 'Intro to cloud', 2),
@@ -120,7 +122,7 @@ VALUES
 ('Cloud Document 2', 'Cloud services overview', 2),
 ('Cloud Document 3', 'Cloud models summary', 2);
 
--- COURSE 3 — Web Development (LessonID = 3)
+-- COURSE 3   Web Development (LessonID = 3)
 INSERT INTO CONTENT_ITEM (Title, Description, LessonID)
 VALUES
 ('Web Video 1', 'HTML introduction', 3),
@@ -135,7 +137,7 @@ VALUES
 ('Web Document 2', 'CSS guide', 3),
 ('Web Document 3', 'JS primer', 3);
 
--- COURSE 4 — Cybersecurity (LessonID = 4)
+-- COURSE 4   Cybersecurity (LessonID = 4)
 INSERT INTO CONTENT_ITEM (Title, Description, LessonID)
 VALUES
 ('Sec Video 1', 'What is cybersecurity?', 4),
@@ -150,7 +152,7 @@ VALUES
 ('Sec Document 2', 'Threat report', 4),
 ('Sec Document 3', 'Security tools list', 4);
 
--- COURSE 5 — SQL Mastery (LessonID = 5)
+-- COURSE 5   SQL Mastery (LessonID = 5)
 INSERT INTO CONTENT_ITEM (Title, Description, LessonID)
 VALUES
 ('SQL Video 1', 'SQL overview', 5),

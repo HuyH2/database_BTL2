@@ -1,7 +1,10 @@
-USE BTL2;
+Ôªø USE BTL2;
 Go
 
-CREATE OR ALTER PROCEDURE sp_AddUser
+
+
+--2.1--
+CREATE OR ALTER PROCEDURE dbo.usp_AddUser
     @UserName NVARCHAR(100),
     @Email NVARCHAR(100),
     @UserPassword NVARCHAR(100),
@@ -11,31 +14,33 @@ CREATE OR ALTER PROCEDURE sp_AddUser
     @OrganizationID INT = NULL
 AS
 BEGIN
+    SET NOCOUNT ON;
+
     -- 1. Validate Email Format
     IF (@Email NOT LIKE '%@%.%')
     BEGIN
-        RAISERROR('Email khÙng h?p l?! –?nh d?ng ph?i gi?ng vÌ d?: name@gmail.com', 16, 1);
+        RAISERROR('Email kh√¥ng h·ª£p l·ªá! ƒê·ªãnh d·∫°ng ph·∫£i gi·ªëng v√≠ d·ª•: name@gmail.com', 16, 1);
         RETURN;
     END
 
     -- 2. Validate Email duplicate
     IF EXISTS (SELECT 1 FROM USER_ACCOUNT WHERE Email = @Email)
     BEGIN
-        RAISERROR('Email n‡y ? t?n t?i trong h? th?ng!', 16, 1);
+        RAISERROR('Email n√†y ƒë√£ t·ªìn t·∫°i trong h·ªá th·ªëng!', 16, 1);
         RETURN;
     END
 
     -- 3. Validate Gender
     IF (@Gender NOT IN ('M','F'))
     BEGIN
-        RAISERROR('Gi?i tÌnh ph?i l‡ M ho?c F!', 16, 1);
+        RAISERROR('Gi·ªõi t√≠nh ph·∫£i l√† M ho·∫∑c F!', 16, 1);
         RETURN;
     END
 
     -- 4. Validate DateOfBirth
     IF (@DateOfBirth >= GETDATE())
     BEGIN
-        RAISERROR('Ng‡y sinh ph?i nh? hın ng‡y hi?n t?i!', 16, 1);
+        RAISERROR('Ng√†y sinh ph·∫£i nh·ªè h∆°n ng√†y hi·ªán t·∫°i!', 16, 1);
         RETURN;
     END
 
@@ -43,7 +48,7 @@ BEGIN
     IF (@OrganizationID IS NOT NULL AND 
         NOT EXISTS (SELECT 1 FROM ORGANIZATION WHERE OrganizationID = @OrganizationID))
     BEGIN
-        RAISERROR('OrganizationID khÙng t?n t?i!', 16, 1);
+        RAISERROR('OrganizationID kh√¥ng t·ªìn t·∫°i!', 16, 1);
         RETURN;
     END
 
@@ -55,12 +60,12 @@ BEGIN
         @Status, @OrganizationID
     );
 
-    PRINT 'ThÍm User th‡nh cÙng!';
+    PRINT 'Th√™m User th√†nh c√¥ng!';
 END;
 GO
 
 
-CREATE OR ALTER PROCEDURE sp_UpdateUser
+CREATE OR ALTER PROCEDURE dbo.usp_UpdateUser
     @UserID INT,
     @UserName NVARCHAR(100),
     @Email NVARCHAR(100),
@@ -71,38 +76,40 @@ CREATE OR ALTER PROCEDURE sp_UpdateUser
     @OrganizationID INT = NULL
 AS
 BEGIN
+SET NOCOUNT ON;
+
     -- 1. Validate user exists
     IF NOT EXISTS (SELECT 1 FROM USER_ACCOUNT WHERE UserID = @UserID)
     BEGIN
-        RAISERROR('UserID khÙng t?n t?i!', 16, 1);
+        RAISERROR('UserID kh√¥ng t·ªìn t·∫°i!', 16, 1);
         RETURN;
     END
 
     -- 2. Validate Email Format
     IF (@Email NOT LIKE '%@%.%')
     BEGIN
-        RAISERROR('Email khÙng h?p l?!', 16, 1);
+        RAISERROR('Email kh√¥ng h·ª£p l·ªá!', 16, 1);
         RETURN;
     END
 
-    -- 3. Email tr˘ng nh˝ng khÙng ph?i c?a chÌnh User Û
+    -- 3. Email tr√πng nh∆∞ng kh√¥ng ph·∫£i c·ªßa ch√≠nh User ƒë√≥
     IF EXISTS (SELECT 1 FROM USER_ACCOUNT WHERE Email = @Email AND UserID <> @UserID)
     BEGIN
-        RAISERROR('Email n‡y ? thu?c v? ng˝?i d˘ng kh·c!', 16, 1);
+        RAISERROR('Email n√†y ƒë√£ thu·ªôc v·ªÅ ng∆∞·ªùi d√πng kh√°c!', 16, 1);
         RETURN;
     END
 
     -- 4. Validate Gender
     IF (@Gender NOT IN ('M','F'))
     BEGIN
-        RAISERROR('Gi?i tÌnh ph?i l‡ M ho?c F!', 16, 1);
+        RAISERROR('Gi·ªõi t√≠nh ph·∫£i l√† M ho·∫∑c F!', 16, 1);
         RETURN;
     END
 
     -- 5. Validate DOB
     IF (@DateOfBirth >= GETDATE())
     BEGIN
-        RAISERROR('Ng‡y sinh ph?i nh? hın ng‡y hi?n t?i!', 16, 1);
+        RAISERROR('Ng√†y sinh ph·∫£i nh·ªè h∆°n ng√†y hi·ªán t·∫°i!', 16, 1);
         RETURN;
     END
 
@@ -110,7 +117,7 @@ BEGIN
     IF (@OrganizationID IS NOT NULL AND 
         NOT EXISTS (SELECT 1 FROM ORGANIZATION WHERE OrganizationID = @OrganizationID))
     BEGIN
-        RAISERROR('OrganizationID khÙng t?n t?i!', 16, 1);
+        RAISERROR('OrganizationID kh√¥ng t·ªìn t·∫°i!', 16, 1);
         RETURN;
     END
 
@@ -126,73 +133,75 @@ BEGIN
         OrganizationID = @OrganizationID
     WHERE UserID = @UserID;
 
-    PRINT 'C?p nh?t User th‡nh cÙng!';
+    PRINT 'C·∫≠p nh·∫≠t User th√†nh c√¥ng!';
 END;
 GO
 
 
-CREATE OR ALTER PROCEDURE sp_DeleteUser
+CREATE OR ALTER PROCEDURE dbo.usp_DeleteUser
     @UserID INT
 AS
 BEGIN
-    -- 1. User ph?i t?n t?i
+SET NOCOUNT ON;
+    -- 1. User ph·∫£i t·ªìn t·∫°i
     IF NOT EXISTS (SELECT 1 FROM USER_ACCOUNT WHERE UserID = @UserID)
     BEGIN
-        RAISERROR('UserID khÙng t?n t?i!', 16, 1);
+        RAISERROR('UserID kh√¥ng t·ªìn t·∫°i!', 16, 1);
         RETURN;
     END
 
-    -- 2. KhÙng xÛa n?u User l‡ Student
+    -- 2. Kh√¥ng x√≥a n·∫øu User l√† Student
     IF EXISTS (SELECT 1 FROM STUDENT WHERE UserID = @UserID)
     BEGIN
-        RAISERROR('KhÙng th? xÛa v? User n‡y ang l‡ STUDENT!', 16, 1);
+        RAISERROR('Kh√¥ng th·ªÉ x√≥a v√¨ User n√†y ƒëang l√† STUDENT!', 16, 1);
         RETURN;
     END
 
-    -- 3. KhÙng xÛa n?u User l‡ Instructor
+    -- 3. Kh√¥ng x√≥a n·∫øu User l√† Instructor
     IF EXISTS (SELECT 1 FROM INSTRUCTOR WHERE UserID = @UserID)
     BEGIN
-        RAISERROR('KhÙng th? xÛa v? User n‡y ang l‡ INSTRUCTOR!', 16, 1);
+        RAISERROR('Kh√¥ng th·ªÉ x√≥a v√¨ User n√†y ƒëang l√† INSTRUCTOR!', 16, 1);
         RETURN;
     END
 
-    -- 4. KhÙng xÛa n?u User l‡ Admin
+    -- 4. Kh√¥ng x√≥a n·∫øu User l√† Admin
     IF EXISTS (SELECT 1 FROM ADMIN WHERE UserID = @UserID)
     BEGIN
-        RAISERROR('KhÙng th? xÛa v? User n‡y ang l‡ ADMIN!', 16, 1);
+        RAISERROR('Kh√¥ng th·ªÉ x√≥a v√¨ User n√†y ƒëang l√† ADMIN!', 16, 1);
         RETURN;
     END
 
-    -- 5. KhÙng xÛa n?u l‡ t·c gi? b‡i vi?t
+    -- 5. Kh√¥ng x√≥a n·∫øu l√† t√°c gi·∫£ b√†i vi·∫øt
     IF EXISTS (SELECT 1 FROM POST WHERE AuthorID = @UserID)
     BEGIN
-        RAISERROR('KhÙng th? xÛa v? User n‡y ? „ng b‡i POST!', 16, 1);
+        RAISERROR('Kh√¥ng th·ªÉ x√≥a v√¨ User n√†y ƒë√£ ƒëƒÉng b√†i POST!', 16, 1);
         RETURN;
     END
 
-    -- 6. KhÙng xÛa n?u t?o forum
+    -- 6. Kh√¥ng x√≥a n·∫øu t·∫°o forum
     IF EXISTS (SELECT 1 FROM FORUM WHERE CreatorID = @UserID)
     BEGIN
-        RAISERROR('KhÙng th? xÛa v? User n‡y ? t?o FORUM!', 16, 1);
+        RAISERROR('Kh√¥ng th·ªÉ x√≥a v√¨ User n√†y ƒë√£ t·∫°o FORUM!', 16, 1);
         RETURN;
     END
 
-    -- 7. KhÙng xÛa n?u ang l‡m Moderator
+    -- 7. Kh√¥ng x√≥a n·∫øu ƒëang l√†m Moderator
     IF EXISTS (SELECT 1 FROM USER_FORUM_MOD WHERE UserID = @UserID)
     BEGIN
-        RAISERROR('KhÙng th? xÛa v? User n‡y ang l‡m MODERATOR!', 16, 1);
+        RAISERROR('Kh√¥ng th·ªÉ x√≥a v√¨ User n√†y ƒëang l√†m MODERATOR!', 16, 1);
         RETURN;
     END
 
-    -- 8. N?u t?t c? ? OK ? XÛa ˝?c
+    -- 8. N·∫øu t·∫•t c·∫£ ƒë√£ OK X√≥a ƒë∆∞·ª£c
     DELETE FROM USER_ACCOUNT WHERE UserID = @UserID;
 
-    PRINT 'XÛa User th‡nh cÙng!';
+    PRINT 'X√≥a User th√†nh c√¥ng!';
 END;
 GO
 
-
---2.3--
+-----------
+----2.3----
+------------
 CREATE OR ALTER PROCEDURE sp_GetStudentsByMajor
     @Major NVARCHAR(100)
 AS
@@ -222,7 +231,7 @@ BEGIN
         MAX(C.Price) AS CoursePrice
     FROM COURSE C
     LEFT JOIN STUDENT_COURSE SC ON C.CourseID = SC.CourseID
-    WHERE C.Price >= 0   -- i?u ki?n where
+    WHERE C.Price >= 0   -- ƒëi·ªÅu ki·ªán where
     GROUP BY C.CourseID, C.Name
     HAVING COUNT(SC.StudentID) >= @MinStudents
     ORDER BY TotalStudents DESC;
