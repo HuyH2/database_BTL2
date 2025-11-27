@@ -15,6 +15,9 @@ const origin = process.env.CORS_ORIGIN || '*'
 app.use(cors({ origin }))
 
 app.use('/api/items', itemsRouter)
+app.use('/api/courses', courseRouter)
+app.use('/api/auth', authRouter)
+app.use(userAccountRouter) // Clean UserAccount routes
 app.use('/api/auth', authRouter)
 app.use(userAccountRouter) // Clean UserAccount routes
 app.use(reportRouter) // Report routes

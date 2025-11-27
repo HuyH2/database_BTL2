@@ -39,6 +39,7 @@ async function register(data) {
     }
 
     // Insert into role table based on data.role
+    await insertUserRole(user.UserID, data.role);
     await insertUserRole(user.UserID, data.role, data);
 
     return {
@@ -63,6 +64,8 @@ async function register(data) {
  * Helper function to insert user into role-specific table
  * @param {number} userId - User ID
  * @param {string} role - User role (Student, Instructor, Admin)
+ */
+async function insertUserRole(userId, role) {
  * @param {Object} data - Registration data (may contain major, educationLevel)
  */
 async function insertUserRole(userId, role, data) {
@@ -71,6 +74,7 @@ async function insertUserRole(userId, role, data) {
   if (role === 'Student') {
     await pool.request()
       .input('UserID', sql.Int, userId)
+      .query('INSERT INTO STUDENT(UserID) VALUES(@UserID)');
       .input('Major', sql.NVarChar, data?.major ?? null)
       .input('Education_Level', sql.NVarChar, data?.educationLevel ?? null)
       .query(`
@@ -169,4 +173,66 @@ async function loginUser(data) {
   }
 }
 
+/**
+ * Kiểm tra email tồn tại (Dùng cho Forgot Password)
+ */
+async function checkEmail(email) {
+  const pool = await poolPromise;
+  const result = await pool.request()
+    .input('Email', sql.NVarChar, email)
+    .query('SELECT 1 FROM USER_ACCOUNT WHERE Email = @Email');
+  
+  return result.recordset.length > 0;
+}
+
+/**
+ * Lấy thông tin User theo ID (Dùng cho GetMe / F5 trang)
+ */
+async function getUserById(userId) {
+  const pool = await poolPromise;
+  const result = await pool.request()
+    .input('UserID', sql.Int, userId)
+    .query(`
+      SELECT ua.UserID, ua.UserName, ua.Email, ua.Status,
+      (
+        SELECT TOP 1 RoleName FROM (
+          SELECT 'student' AS RoleName FROM STUDENT WHERE UserID = ua.UserID
+          UNION ALL
+          SELECT 'teacher' FROM INSTRUCTOR WHERE UserID = ua.UserID
+          UNION ALL
+          SELECT 'admin' FROM ADMIN WHERE UserID = ua.UserID
+        ) roles
+      ) AS Role
+      FROM USER_ACCOUNT ua
+      WHERE ua.UserID = @UserID
+    `);
+    
+  return result.recordset[0];
+}
+
+/**
+ * Reset Mật khẩu
+ */
+async function resetPassword(email, newPassword) {
+  const pool = await poolPromise;
+  
+  // Hash mật khẩu mới trước khi lưu
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  await pool.request()
+    .input('Email', sql.NVarChar, email)
+    .input('Password', sql.NVarChar, hashedPassword)
+    .query('UPDATE USER_ACCOUNT SET UserPassword = @Password WHERE Email = @Email');
+  
+  return true;
+}
+
+// Export đầy đủ
+module.exports = { 
+  register, 
+  loginUser, 
+  checkEmail, 
+  getUserById, 
+  resetPassword 
+};
 module.exports = { register, loginUser };
