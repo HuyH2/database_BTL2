@@ -40,6 +40,7 @@ async function register(data) {
 
     // Insert into role table based on data.role
     await insertUserRole(user.UserID, data.role);
+    await insertUserRole(user.UserID, data.role, data);
 
     return {
       message: 'Register success',
@@ -65,12 +66,21 @@ async function register(data) {
  * @param {string} role - User role (Student, Instructor, Admin)
  */
 async function insertUserRole(userId, role) {
+ * @param {Object} data - Registration data (may contain major, educationLevel)
+ */
+async function insertUserRole(userId, role, data) {
   const pool = await poolPromise;
   
   if (role === 'Student') {
     await pool.request()
       .input('UserID', sql.Int, userId)
       .query('INSERT INTO STUDENT(UserID) VALUES(@UserID)');
+      .input('Major', sql.NVarChar, data?.major ?? null)
+      .input('Education_Level', sql.NVarChar, data?.educationLevel ?? null)
+      .query(`
+        INSERT INTO STUDENT (UserID, Major, Education_Level)
+        VALUES (@UserID, @Major, @Education_Level)
+      `);
   } else if (role === 'Instructor') {
     await pool.request()
       .input('UserID', sql.Int, userId)
@@ -225,3 +235,4 @@ module.exports = {
   getUserById, 
   resetPassword 
 };
+module.exports = { register, loginUser };

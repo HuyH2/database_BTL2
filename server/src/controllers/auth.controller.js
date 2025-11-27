@@ -144,3 +144,5 @@ module.exports = {
   resetPassword,
   logout
 };
+
+module.exports = { register, login };
