@@ -12,6 +12,9 @@ const config = {
   }
 };
 
+// Create poolPromise for modern usage
+const poolPromise = sql.connect(config);
+
 async function getPool() {
   const pool = await sql.connect(config);
   return pool;
@@ -30,3 +33,4 @@ async function connectDB() {
 }
 
 module.exports = connectDB;
+module.exports.poolPromise = poolPromise;
